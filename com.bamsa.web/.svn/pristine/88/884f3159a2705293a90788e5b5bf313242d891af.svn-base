@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	</bean>
+	
+	<context:component-scan base-package="com.bamsa" />
+	<mvc:resources mapping="/static/**" location="/static/" />
+
+	<mvc:annotation-driven />
+	
+	<bean class="org.springframework.web.servlet.view.XmlViewResolver">
+		<property name="location">
+			<value>/WEB-INF/spring-excel-views.xml</value>
+		</property>
+	</bean>
+	
+	 <bean class="org.springframework.web.servlet.view.XmlViewResolver">
+       <property name="location">
+          <value>/WEB-INF/spring-pdf-views.xml</value>
+       </property>
+    </bean>
+	
+	
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/views/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+	<bean id="dataSource" name="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="org.gjt.mm.mysql.Driver" />
+		<property name="url" value="jdbc:mysql://localhost:3306/bamsa" />
+		<property name="username" value="root" />
+		<property name="password" value="prodesign@123" />
+	</bean>
+	<bean id="dbProps"
+		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="location" value="classpath:sqlQueries.properties" />
+	</bean>
+	<bean id="jdbcTemplate" name="jdbcTemplate"
+		class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+	</bean>
+	
+
+  <bean id="encoder"
+class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="smtp.gmail.com" />
+        <property name="port" value="587" />
+         <property name="username" value="bamsa.prodesign@gmail.com" />
+        <property name="password" value="bamsaprodesign@99" />
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.transport.protocol">smtp</prop>
+                <prop key="mail.smtp.auth">true</prop>
+                <prop key="mail.smtp.starttls.enable">true</prop>
+            </props>
+        </property>
+    </bean>
+   <bean id="fileProps"
+		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="location" value="classpath:config.properties" />
+	</bean>
+	
+</beans>

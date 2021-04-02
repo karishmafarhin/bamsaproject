@@ -1,0 +1,110 @@
+package com.bamsa.db.beans;
+
+import org.springframework.stereotype.Component;
+
+@Component
+public class CandidateJobInfoBean {
+  
+	private int cjid;
+	private String candidateCategory;
+	private String candidateSubcategory;
+	private int candidateNoofjobschanged;
+	private String currentEmployer;
+	private int totalworkExpyrs;
+	private int totalworkExpmonths;
+	private int gapPeriod;
+	private float relevantexp;
+	private String jobtitile;
+	private String objectives;
+	private String achievments;
+	private String references;
+	
+	public int getCjid() {
+		return cjid;
+	}
+	public void setCjid(int cjid) {
+		this.cjid = cjid;
+	}
+	public String getCandidateCategory() {
+		return candidateCategory;
+	}
+	public void setCandidateCategory(String candidateCategory) {
+		this.candidateCategory = candidateCategory;
+	}
+	public String getCandidateSubcategory() {
+		return candidateSubcategory;
+	}
+	public void setCandidateSubcategory(String candidateSubcategory) {
+		this.candidateSubcategory = candidateSubcategory;
+	}
+	public int getCandidateNoofjobschanged() {
+		return candidateNoofjobschanged;
+	}
+	public void setCandidateNoofjobschanged(int candidateNoofjobschanged) {
+		this.candidateNoofjobschanged = candidateNoofjobschanged;
+	}
+	public String getCurrentEmployer() {
+		return currentEmployer;
+	}
+	public void setCurrentEmployer(String currentEmployer) {
+		this.currentEmployer = currentEmployer;
+	}
+	public int getTotalworkExpyrs() {
+		return totalworkExpyrs;
+	}
+	public void setTotalworkExpyrs(int totalworkExpyrs) {
+		this.totalworkExpyrs = totalworkExpyrs;
+	}
+	public int getTotalworkExpmonths() {
+		return totalworkExpmonths;
+	}
+	public void setTotalworkExpmonths(int totalworkExpmonths) {
+		this.totalworkExpmonths = totalworkExpmonths;
+	}
+	public int getGapPeriod() {
+		return gapPeriod;
+	}
+	public void setGapPeriod(int gapPeriod) {
+		this.gapPeriod = gapPeriod;
+	}
+	public float getRelevantexp() {
+		return relevantexp;
+	}
+	public void setRelevantexp(float relevantexp) {
+		this.relevantexp = relevantexp;
+	}
+	public String getJobtitile() {
+		return jobtitile;
+	}
+	public void setJobtitile(String jobtitile) {
+		this.jobtitile = jobtitile;
+	}
+	public String getObjectives() {
+		return objectives;
+	}
+	public void setObjectives(String objectives) {
+		this.objectives = objectives;
+	}
+	public String getAchievments() {
+		return achievments;
+	}
+	public void setAchievments(String achievments) {
+		this.achievments = achievments;
+	}
+	public String getReferences() {
+		return references;
+	}
+	public void setReferences(String references) {
+		this.references = references;
+	}
+	@Override
+	public String toString() {
+		return "CandidateJobInfoBean [cjid=" + cjid + ", candidateCategory=" + candidateCategory
+				+ ", candidateSubcategory=" + candidateSubcategory + ", candidateNoofjobschanged="
+				+ candidateNoofjobschanged + ", currentEmployer=" + currentEmployer + ", totalworkExpyrs="
+				+ totalworkExpyrs + ", totalworkExpmonths=" + totalworkExpmonths + ", gapPeriod=" + gapPeriod
+				+ ", relevantexp=" + relevantexp + ", jobtitile=" + jobtitile + ", objectives=" + objectives
+				+ ", achievments=" + achievments + ", references=" + references + "]";
+		
+	}
+}

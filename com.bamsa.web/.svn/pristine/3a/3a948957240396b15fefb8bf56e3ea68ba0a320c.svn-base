@@ -1,0 +1,21 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+ 
+ 	<bean id="BamsaProfilesExcel"
+	   	class="com.bamsa.web.files.BamsaProfilesXlGenerator">
+	</bean>
+	<bean id="BamsaGrievanceExcel"
+	   	class="com.bamsa.web.files.BamsaGrievanceXlGenerator">
+	</bean>
+	<bean id="BamsaTaskExcel"
+	   	class="com.bamsa.web.files.BamsaTaskXlGenerator">
+	</bean>
+	<bean id="TicketDetailsExcel"
+	   class="com.bamsa.web.files.TicketDetailsXlGenerator">
+	   </bean>
+	<bean id="TimesheetExcel"
+	   class="com.bamsa.web.files.TimesheetXlGenerator">
+	   </bean>
+</beans>

@@ -1,0 +1,14 @@
+package com.bamsa.db.dao;
+
+import com.bamsa.db.beans.ContactBean;
+
+public interface ContactDAO {
+	
+	/**
+	 * creates Contact info
+	 * @param ContactBean bean
+	 * @return ContactBean bean
+	 */
+	public ContactBean saveContactdetails(ContactBean contactdetails);
+
+}

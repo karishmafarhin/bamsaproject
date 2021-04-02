@@ -1,0 +1,188 @@
+package com.bamsa.db.dao.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcCall;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
+
+
+import com.bamsa.db.beans.Employee;
+import com.bamsa.db.beans.EmployeeDetails;
+import com.bamsa.db.beans.User;
+import com.bamsa.db.dao.EmployeeDAO;
+import com.bamsa.db.impls.mappers.EmpIdRowMapper;
+import com.bamsa.db.impls.mappers.EmployeeDetailsRowMapper;
+import com.bamsa.db.impls.mappers.EmployeeDetailsUnderEmpRowMapper;
+import com.bamsa.db.impls.mappers.ReportUserRowMapper;
+import com.bamsa.db.util.DBConstants;
+
+@Repository
+public class EmployeeDAOImpl implements EmployeeDAO {
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+	
+	@Autowired
+	private Properties dbProps;
+	private static Logger logger = Logger.getLogger(EmployeeDAOImpl.class);
+	private HashMap<Integer,Employee> beans = new HashMap<Integer, Employee>();
+	private ArrayList<Employee> employeeDetails = new ArrayList<Employee>();
+	@Override
+	public User createUser(User user) {
+		logger.info("enter into createUser");
+		DataSource dataSource = jdbcTemplate.getDataSource();
+		if(null != user){
+			SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(dataSource);
+			jdbcInsert.withTableName("users")
+			.usingGeneratedKeyColumns("uid");
+
+			Map<String,Object> recordParameters = new HashMap<String,Object>();
+			recordParameters.put("username",user.getUsername());
+			recordParameters.put("password",user.getPassword());
+			recordParameters.put("status",user.getStatus());
+			recordParameters.put("locked",user.getLocked());
+			recordParameters.put("createdby",user.getCreatedBy());
+			recordParameters.put("createddate",user.getCreatedDate());
+			logger.info(recordParameters);
+			int uid = jdbcInsert.executeAndReturnKey(recordParameters).intValue();
+			user.setUid(uid);
+		}
+		
+		logger.info("exit from createUser");
+		return user;
+	}
+	@Override
+	public List<EmployeeDetails> getEmployees(){
+		logger.info("getEmployees");
+		String getEmployeeName=dbProps.getProperty(DBConstants.LOAD_EMPLOYEE_DETAILS);
+		List<EmployeeDetails> details=jdbcTemplate.query(getEmployeeName, new EmployeeDetailsRowMapper());
+		logger.info(details);
+        logger.info("exit from getEmployees");
+		return details;		
+
+	}
+
+	private Employee getEmployeesUnderParticularuser(int uid){
+		logger.info("Enter into getEmployeesUnderParticularuser");
+		Employee employee =null;
+		String loadEmployeeDetails = dbProps.getProperty(DBConstants.LOAD_EMPLOYEES_UNDER_EMPLOYEE);
+		SimpleJdbcCall caller = new SimpleJdbcCall(jdbcTemplate);
+		caller.withProcedureName(loadEmployeeDetails);
+		caller.returningResultSet("actors",new EmployeeDetailsUnderEmpRowMapper());
+		Map<String,Object> result = caller.execute();
+		employee = buildEmployeesUnderUser((List<Employee>)result.get("actors"));
+		if(uid!=0 && beans != null){
+			Iterator<Integer> itr = beans.keySet().iterator();
+			while(itr.hasNext()){
+				Employee bean = beans.get(itr.next());
+				if(uid==bean.getUid()){
+					employee = bean;
+
+					break;
+				}
+				else{
+					employee = null;
+				}
+			}
+		}
+		
+		logger.info(employee);
+		logger.info("Exit from getEmployeesUnderParticularuser");
+		return employee;
+
+	}
+	private Employee buildEmployeesUnderUser(List<Employee> emps){
+		logger.info("Enter into buildEmployeesUnderUser");
+		Employee adminBean = new Employee();
+		adminBean.setEmpId("Admin");
+		adminBean.setName("Admin");
+		adminBean.setHierarchyId(0);
+		adminBean.setUid(0);
+		adminBean.setStreamid(0);
+		adminBean.setDesigid(0);
+		beans.put(0, adminBean);
+		if(emps != null && emps.size() > 0){
+
+			for(Employee bean: emps){
+				int hierarchyId = bean.getHierarchyId(); 
+				if(beans.containsKey(hierarchyId)){
+					Employee parentBean = beans.get(hierarchyId);
+					parentBean.getChildren().add(bean);
+					beans.put(bean.getUid(), bean);
+
+				}			
+			}
+		}
+
+
+		logger.info(adminBean);;
+		logger.info("Exit from buildEmployeesUnderUser");
+		return  adminBean;
+	}
+	public ArrayList<Employee> getEmployeesunderuser(int uid){
+		logger.info("Enter into getEmployeesunderuser");
+		Employee employees = getEmployeesUnderParticularuser(uid);
+		employeeDetails =new ArrayList<Employee>();
+		employeeDetails=(buildEmployees(employees.getChildren()));
+		logger.info(employeeDetails);;
+		logger.info("Exit from getEmployeesunderuser");
+		return employeeDetails;
+	}
+
+	private ArrayList<Employee> buildEmployees(List<Employee> childrenEmployees){
+		logger.info("Enter into buildEmployees");
+		logger.info(childrenEmployees);
+		if(childrenEmployees != null){
+			for(Employee bean:childrenEmployees){
+				Employee listEmployee = new Employee();
+				listEmployee.setUid(bean.getUid());
+				listEmployee.setEmpId(bean.getEmpId());
+				listEmployee.setName(bean.getName());
+				listEmployee.setStreamid(bean.getStreamid());
+				listEmployee.setDesigid(bean.getDesigid());
+				employeeDetails.add(listEmployee);
+				List<Employee> children =bean.getChildren();
+				if(!CollectionUtils.isEmpty(children)){
+					buildEmployees(children);
+				}
+			}
+			
+
+		}
+		logger.info(employeeDetails);;
+		logger.info("Exit from buildEmployees");
+		return employeeDetails;
+	}
+	
+	@Override
+	public List<EmployeeDetails> getEmployeesDepartmentDetails(){
+		logger.info("getEmployees");
+		String getdepartment=dbProps.getProperty(DBConstants.DEPARTMENT_DETAILS);
+		List<EmployeeDetails> details=jdbcTemplate.query(getdepartment, new EmpIdRowMapper());
+		logger.info(details);
+        logger.info("exit from getEmployees");
+		return details;		
+
+	}
+	@Override
+	public List<EmployeeDetails> getEmployeesReportingDetals()
+	{   
+		logger.info("enter into getEmployeesReportingDetals ");
+		String empdetails =dbProps.getProperty(DBConstants.REPORTING_DETAILS);
+		logger.info(empdetails);
+		List<EmployeeDetails> details=jdbcTemplate.query(empdetails,new ReportUserRowMapper());
+		logger.info(details);
+		return details;
+	}
+}

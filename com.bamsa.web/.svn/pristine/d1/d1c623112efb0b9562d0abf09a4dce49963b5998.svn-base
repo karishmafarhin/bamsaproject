@@ -1,0 +1,651 @@
+package com.bamsa.web.controller;
+
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Controller;
+import org.springframework.util.Base64Utils;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.bamsa.db.exceptions.DBUpdateException;
+import com.bamsa.web.model.AssetTicketModel;
+import com.bamsa.web.model.AssetTrackingModel;
+import com.bamsa.web.model.CompanyAccessoryModel;
+import com.bamsa.web.model.CompanyAssetModel;
+import com.bamsa.web.model.CompanyComponentModel;
+import com.bamsa.web.model.CompanyConsumableModel;
+import com.bamsa.web.model.CompanyLicenseModel;
+import com.bamsa.web.model.EmployeeDetailsModel;
+import com.bamsa.web.model.EmployeeModel;
+import com.bamsa.web.model.GrievanceDetailsModel;
+import com.bamsa.web.model.NewBranchModel;
+import com.bamsa.web.model.NewProjectModel;
+import com.bamsa.web.model.UserBean;
+import com.bamsa.web.service.UserService;
+import com.bamsa.web.util.ApplicationConstants;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@Controller
+public class AssetTrackingController {
+	@Autowired
+	UserService userServiceImpl;
+	@Autowired
+    private JavaMailSender mailSender;
+	private static Logger logger = Logger.getLogger(AssetTrackingController.class);
+	@RequestMapping("/CompanyAssets")
+	public String showAssetsPage(HttpServletRequest request){
+		 List<String> branchnames = userServiceImpl.getBranchNameDetails();
+		 request.setAttribute("report",branchnames);	
+		return "Assets";
+	}
+	
+	@RequestMapping("/registerAsset")
+	public String registerAsset(@RequestParam("image") MultipartFile file,HttpServletRequest request) throws ParseException{
+		logger.info("enter into registerAsset ");
+		CompanyAssetModel model = buildAssetDetails(request);
+		logger.info(model);
+		try{
+			
+		if (!file.isEmpty()) {
+			 byte[] pictureBytes = file.getBytes();					
+			 model.setAssetImage(pictureBytes);
+			
+			
+				}
+		else{
+			request.setAttribute("errormessage", "Your image is empty");
+			
+			return "forward:/CompanyAssets";
+			
+		}
+		model = userServiceImpl.registerAsset(model);
+		
+		}catch(Exception e)
+		{
+			request.setAttribute("errormessage", "Asset already exists");
+			logger.error(e.getMessage());
+			return "forward:/CompanyAssets";
+			
+		}
+		request.setAttribute("successmessage", "Asset created successfully");
+		logger.info("Exit from registerAsset");
+		
+		return "forward:/CompanyAssets";
+	}
+	private CompanyAssetModel buildAssetDetails(HttpServletRequest request) throws ParseException{
+		CompanyAssetModel assetModel = new CompanyAssetModel();
+		try{
+			UserBean userData = (UserBean) request.getSession().getAttribute(ApplicationConstants.LOGIN_BEAN);
+			int uid = userData.getUid();
+			assetModel.setCreatedBy(uid);	
+			assetModel.setCreatedDate(new Date());
+			assetModel.setAssetTag(request.getParameter("asset_tag"));
+		assetModel.setModel(request.getParameter("model_id"));
+		assetModel.setAssetStatus(request.getParameter("status_id"));
+		assetModel.setBranchname(request.getParameter("branchname"));
+		assetModel.setAssetSerial(request.getParameter("serial"));
+		assetModel.setAssetName(request.getParameter("assetname"));
+		DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+		assetModel.setPurchasedDate(format.parse(request.getParameter("purchasedate")));
+		assetModel.setSupplier(request.getParameter("supplier_id"));
+		assetModel.setOrderNo(request.getParameter("order_number"));
+		assetModel.setPurchaseCost(Float.parseFloat(request.getParameter("purchase_cost")));
+		assetModel.setWarranty(Integer.valueOf(request.getParameter("warranty_months")));
+		assetModel.setNotes(request.getParameter("notes"));
+		}catch(Exception e)
+		{
+			
+			logger.info("Exit From registerAsset");
+		}
+		return assetModel;
+	}
+
+	@RequestMapping("/registerLicense")
+	public String registerLicense(HttpServletRequest request)
+	{
+		try{
+		logger.info("Enter into registerLicense");
+		CompanyLicenseModel license = buildLicenseDetails(request);
+		userServiceImpl.registerLicense(license);
+		if(null!=license){
+			request.setAttribute("successmessage", "Licesnce created successfully");
+		}
+		
+	}catch(Exception e)
+	{
+		request.setAttribute("errormessage", "License already exists");
+		logger.info("Exit From registerLicense");
+	}
+		return "forward:/CompanyAssets";
+	
+	}
+	private CompanyLicenseModel buildLicenseDetails(HttpServletRequest request){
+		CompanyLicenseModel licenseModel = new CompanyLicenseModel();
+		try{
+			UserBean userData = (UserBean) request.getSession().getAttribute(ApplicationConstants.LOGIN_BEAN);
+			int uid = userData.getUid();
+            licenseModel.setCreatedBy(uid);
+            licenseModel.setCreatedDate(new Date());
+			licenseModel.setLicenseTag(request.getParameter("License_tag"));
+			licenseModel.setBranchname(request.getParameter("branchname"));
+			licenseModel.setSoftwareName(request.getParameter("software"));
+			licenseModel.setSeats(Integer.valueOf(request.getParameter("seats")));
+			licenseModel.setManufacturer(request.getParameter("manufacturer"));
+			licenseModel.setLicensedTo(request.getParameter("Licensed"));
+			licenseModel.setLicensedMail(request.getParameter("Licensedemail"));
+			licenseModel.setProductKey(request.getParameter("product"));
+			licenseModel.setOrderNo(request.getParameter("order_number"));
+			licenseModel.setPurchaseCost(Float.parseFloat(request.getParameter("purchase_cost")));
+
+			DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+			licenseModel.setPurchasedDate(format.parse(request.getParameter("purchasedate")));
+
+
+			DateFormat format2 = new SimpleDateFormat("dd-MM-yyyy");
+			licenseModel.setExpirationDate(format2.parse(request.getParameter("expiraydate")));
+
+			licenseModel.setNotes(request.getParameter("notes"));
+		}catch(Exception e){
+			logger.error(e.getMessage());
+		}
+		logger.info(licenseModel);
+		return licenseModel;
+	}
+	@RequestMapping("/registerConsumable")
+	public String registerConsumable(HttpServletRequest request)
+	{
+		try{
+		logger.info("Enter into registerConsumable");
+		CompanyConsumableModel consumable = buildConsumableDetails(request);
+		consumable =userServiceImpl.registerConsumable(consumable);
+		if(null!=consumable){
+			request.setAttribute("successmessage", "consumable created successfully");
+		}
+				
+			
+	}catch(Exception e)
+	{
+		request.setAttribute("errormessage", "consumable details already exists");
+		logger.info("Exit From registerConsumable");
+	}
+		return "forward:/CompanyAssets";
+	
+	}
+	private CompanyConsumableModel buildConsumableDetails(HttpServletRequest request){
+		CompanyConsumableModel consumableModel = new CompanyConsumableModel();
+		try{
+			UserBean userData = (UserBean) request.getSession().getAttribute(ApplicationConstants.LOGIN_BEAN);
+			int uid = userData.getUid();
+			consumableModel.setCreatedBy(uid);
+			consumableModel.setConsumableTag(request.getParameter("consumable_tag"));
+			consumableModel.setCreatedDate(new Date());
+			consumableModel.setConsumableName(request.getParameter("consumable"));
+			consumableModel.setBranchname(request.getParameter("branchname"));
+			consumableModel.setCategory(request.getParameter("category"));
+			consumableModel.setManufacturer(request.getParameter("manufacturer"));
+			consumableModel.setModelNo(request.getParameter("model_id"));
+			consumableModel.setItemNo(request.getParameter("itemno"));
+			consumableModel.setOrderNo(request.getParameter("order_number"));
+			consumableModel.setPurchaseCost(Float.parseFloat(request.getParameter("purchase_cost")));
+
+			DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+			consumableModel.setPurchasedDate(format.parse(request.getParameter("purchasedate")));
+			
+			consumableModel.setQuantity(Integer.valueOf(request.getParameter("Quantity_number")));
+		}catch(Exception e){
+			logger.error(e.getMessage());
+		}
+		logger.info(consumableModel);
+		return consumableModel;
+	}
+	
+	@RequestMapping("/registeraccessory")
+	public String registerAccessory(HttpServletRequest request) throws ParseException{
+	            logger.info("Enter into registerAccessory");
+	            CompanyAccessoryModel model = buildAccessoryDetails(request);
+	            try{
+	            	 model= userServiceImpl.registerAccessoryDetails(model);
+	            	 if(null!=model){
+	            		 request.setAttribute("successmessage", " Accessory registration successfull");
+	            	 }
+	            }
+	           catch(Exception e){
+	        	   request.setAttribute("errormessage", " Accessory already exists");
+	        	   logger.error(e.getMessage());
+	           }
+	           	            
+	            logger.info("exit from registerAccessory");
+	        	return "forward:/CompanyAssets";
+		
+	}
+	private CompanyAccessoryModel buildAccessoryDetails(HttpServletRequest request) throws ParseException{
+	     logger.info("Enter into buildAccessoryDetails ");
+	     CompanyAccessoryModel accessorymodel = new CompanyAccessoryModel();
+	     try{
+	     UserBean userData = (UserBean) request.getSession().getAttribute(ApplicationConstants.LOGIN_BEAN);
+			int uid =userData.getUid();
+		
+		accessorymodel.setUserid(uid);
+		accessorymodel.setCreatedDate(new Date());
+		accessorymodel.setAccessorytag(request.getParameter("accessorytag"));
+		accessorymodel.setBranchname(request.getParameter("branchname"));
+		accessorymodel.setAccessoryname(request.getParameter("software"));
+		accessorymodel.setCategory(request.getParameter("category"));
+		accessorymodel.setManufacturer(request.getParameter("manufacturer"));
+		accessorymodel.setModelno(request.getParameter("modelid"));
+		accessorymodel.setOrderno(request.getParameter("ordernumber"));
+		accessorymodel.setPurchasecost(Float.parseFloat(request.getParameter("purchasecost")));
+		DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+		accessorymodel.setPurchaseDate(format.parse(request.getParameter("purchasedate")));
+		accessorymodel.setQuantity(Integer.parseInt(request.getParameter("Quantitynumber")));
+	     }catch(Exception e){
+	    	 logger.error(e.getMessage());
+	     }
+ 		logger.info(accessorymodel);
+ 		logger.info("exit from buildAccessoryDetails");
+    return accessorymodel;
+	}
+	
+	@RequestMapping("/registercomponent")
+	public String registerComponent(HttpServletRequest request)
+	{
+		 logger.info("Enter into registerComponent");
+		try{
+		CompanyComponentModel model =buildComponentDetails(request);
+		 model= userServiceImpl.registerComponentDetails(model);
+		 if(null!=model)
+		 {		 request.setAttribute("successmessage", "Component created successfully");
+		 }
+		 
+		}catch(Exception e){
+			 request.setAttribute("errormessage", "Component already exists");
+			logger.error(e.getMessage());
+		}
+         logger.info("exit from registerComponent");
+     	return "forward:/CompanyAssets";
+	}
+	
+	private CompanyComponentModel buildComponentDetails(HttpServletRequest request)
+	{
+		
+		 logger.info("Enter into buildComponentDetails ");
+		
+		 CompanyComponentModel componentmodel = new CompanyComponentModel();
+		 try{
+		 UserBean userData = (UserBean) request.getSession().getAttribute(ApplicationConstants.LOGIN_BEAN);
+		 int uid =userData.getUid();
+		 componentmodel.setUserid(uid);
+		 componentmodel.setCreatedDate(new Date());
+		 componentmodel.setComponenttag(request.getParameter("componenttag"));
+		 componentmodel.setComponentName(request.getParameter("component"));
+		 componentmodel.setBranchname(request.getParameter("branchname"));
+		 componentmodel.setCategory(request.getParameter("category"));
+		 componentmodel.setOrderNo(request.getParameter("ordernumber"));
+		 componentmodel.setPurchaseCost(Float.parseFloat(request.getParameter("purchase_cost")));
+		 DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+		 componentmodel.setPurchasedDate(format.parse(request.getParameter("purchasedate")));
+		 componentmodel.setSerialNo(request.getParameter("serialno"));		
+			
+		}catch(Exception e){
+			logger.error(e.getMessage());
+		}
+		
+		 return componentmodel;
+	}
+	@RequestMapping("/showTicket")
+	public String showticketforasset(HttpServletRequest request) {
+		   logger.info("enter into showticketforasset ");
+		   
+		   try{
+			   List<EmployeeModel> reportdetails = userServiceImpl.getEmployeesReportingDetails();
+			   logger.info(reportdetails);
+				AssetTrackingModel model = new AssetTrackingModel();
+				List<List<String>> ali = new ArrayList<List<String>>();
+				List<List<String>> lli = new ArrayList<List<String>>();
+				List<List<String>> acli = new ArrayList<List<String>>();
+				List<List<String>> cli = new ArrayList<List<String>>();
+				List<List<String>> cmli = new ArrayList<List<String>>();
+				List<CompanyAssetModel> detailsModelAsset;
+				detailsModelAsset=userServiceImpl.getCompanyAsset();
+				for(CompanyAssetModel mode :detailsModelAsset){
+					List<String> li = new ArrayList<String>();
+						li.add(mode.getAssetTag());
+						li.add(mode.getAssetTag());
+						ali.add(li);
+				}
+				
+				model.setAsset(ali);
+				
+				List<CompanyLicenseModel> licensedetails;
+				licensedetails=userServiceImpl.getCompanyLicensesDetails();
+				for(CompanyLicenseModel mode:licensedetails){
+					List<String> li=new ArrayList<String>();
+					li.add(mode.getLicenseTag());
+					li.add(mode.getLicenseTag());
+					lli.add(li);
+				}
+				model.setLicense(lli);
+				List<CompanyAccessoryModel> detailsModelAccessory;
+				detailsModelAccessory=userServiceImpl.getCompanyAccessory();
+				for(CompanyAccessoryModel acc:detailsModelAccessory){
+					List<String> li=new ArrayList<String>();
+					li.add(acc.getAccessorytag());
+					li.add(acc.getAccessorytag());
+					acli.add(li);
+				}
+				model.setAccessory(acli);
+				List<CompanyConsumableModel> consumabledetails;
+				consumabledetails=userServiceImpl.getCompanyConsumableDetails();
+				for(CompanyConsumableModel con:consumabledetails){
+					List<String> li=new ArrayList<String>();
+					li.add(con.getConsumableTag());
+					li.add(con.getConsumableTag());
+					cli.add(li);
+				}
+				model.setConsumable(cli);
+				List<CompanyComponentModel> detailsModelComponent;
+				detailsModelComponent=userServiceImpl.getCompanyComponent();
+				for(CompanyComponentModel com:detailsModelComponent){
+					List<String> li=new ArrayList<String>();
+					li.add(com.getComponenttag());
+					li.add(com.getComponenttag());
+					cmli.add(li);
+				}
+				model.setComponent(cmli);
+				ObjectMapper objMapper = new ObjectMapper();
+				String notesjson = objMapper.writeValueAsString(model);
+				request.setAttribute("notesjson", notesjson);
+				logger.info(notesjson);
+				request.setAttribute("report",reportdetails );	
+			}catch (Exception e) {
+	
+		logger.error(e.getMessage());
+	}
+    
+	return "ticketforasset";
+}
+	@RequestMapping("/licensedetails")
+	public String showCompanyLecensesDetails(HttpServletRequest request)
+	{
+		try{
+			List<CompanyLicenseModel> licensedetails = userServiceImpl.getCompanyLicensesDetails();
+			logger.info(licensedetails);
+
+			int count=0;
+
+			Date presentdate=new Date();
+
+			Long timebefore=presentdate.getTime();
+
+			for(CompanyLicenseModel alert:licensedetails){
+				logger.info(alert.getExpirationDate());
+				Date sDate1=alert.getExpirationDate();
+				Long timetoday=sDate1.getTime();
+				logger.info("Exp date"+timetoday);
+				
+				if((timetoday-timebefore)<=604800000){
+					
+					
+					count++;
+					logger.info(count);
+					
+				}
+				request.setAttribute("alertcount", count);
+				
+			}
+		List<CompanyConsumableModel> consumabledetails=userServiceImpl.getCompanyConsumableDetails();
+		logger.info(consumabledetails);
+		List<CompanyAssetModel> detailsModelAsset= userServiceImpl.getCompanyAsset();
+		List<CompanyAccessoryModel> detailsModelAccessory= userServiceImpl.getCompanyAccessory();
+		List<CompanyComponentModel> detailsModelComponent=userServiceImpl.getCompanyComponent();
+		request.setAttribute("componentDetails",detailsModelComponent );
+		request.setAttribute("AccessoryDetails",detailsModelAccessory );
+		request.setAttribute("AssetDetails",detailsModelAsset );
+		request.setAttribute("license", licensedetails);
+		request.setAttribute("consumable", consumabledetails);
+		}catch(Exception e){
+			logger.error(e.getMessage());
+		}
+		return "viewasset";
+	}
+	
+	
+	@RequestMapping("/ticketregister")
+	public String registerAssetTicket(HttpServletRequest request)
+	{ 
+		logger.info("enter into registerAssetTicket");
+		try{
+		AssetTicketModel model=buildAssetTicketDetails(request);
+		model=userServiceImpl.registerAssetTicket(model);
+		EmployeeDetailsModel empModelDetails= userServiceImpl.getEmplDetails(model.getRisedby());
+        String recipientAddress = empModelDetails.getEmail();
+        String subject = "Your ticket successfully";
+        String message = "Hi, You had successfully raised the ticket.The concerned administration department"
+        		+ "person will contact you soon";
+        		
+       
+             
+        // prints debug info
+        logger.info("To: " + recipientAddress);
+        logger.info("Subject: " + subject);
+        logger.info("Message: " + message);
+         
+        // creates a simple e-mail object
+        SimpleMailMessage email = new SimpleMailMessage();
+       
+        	email.setTo(recipientAddress);
+        	email.setSubject(subject);
+            email.setText(message);
+           
+             
+            // sends the e-mail
+            mailSender.send(email);
+		
+		if(null!= model)
+		{
+		request.setAttribute("successmessage", "Ticket raised successfully");
+		}else
+		{
+			request.setAttribute("errormessage", "Sorry! Ticket not raised");
+			
+		}
+		
+		logger.info(model);
+		
+		}catch(Exception e)
+		{
+			logger.error(e.getMessage());
+		}
+		return "forward:/showTicket";
+	}
+	
+	public AssetTicketModel buildAssetTicketDetails(HttpServletRequest request) throws ParseException
+	{
+		logger.info("enter into buildAssetTicketDetails");
+		UserBean userData = (UserBean) request.getSession().getAttribute(ApplicationConstants.LOGIN_BEAN);
+		int uid =userData.getUid();
+		AssetTicketModel assetticket = new AssetTicketModel();
+		try{
+		assetticket.setRisedby(uid);
+		assetticket.setRiseddate(new Date());
+		assetticket.setAssettype(request.getParameter("type"));
+		assetticket.setTag(request.getParameter("tag"));
+		assetticket.setRequestto(Integer.parseInt(request.getParameter("requestingto")));
+		assetticket.setPurpose(request.getParameter("purpose"));
+		assetticket.setRemarks(request.getParameter("remarks"));
+		int purpose = Integer.valueOf(request.getParameter("purpose"));
+		if(purpose==4){
+			DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+			assetticket.setFromdate(format.parse(request.getParameter("fromdate")));
+			assetticket.setTodate(format.parse(request.getParameter("todate")));
+			assetticket.setPurpose("Taking Home");
+			assetticket.setThstatus("NA");
+			
+		}
+		else if(purpose==3){
+			assetticket.setPurpose("Repair");
+			assetticket.setRstatus("NF");
+		}
+		else if(purpose==1){
+			assetticket.setPurpose("Broken");
+			assetticket.setBstatus("NF");
+		}
+		else{
+			assetticket.setPurpose("Lost");
+		}
+		}catch(Exception e){
+			logger.error(e.getMessage());
+		}
+		logger.info(assetticket);
+		logger.info("exit from buildAssetTicketDetails");
+		return assetticket;
+		
+	}
+	@RequestMapping("/viewTicket")
+	public String showRisedTickets(HttpServletRequest request){
+		try{
+		UserBean userData = (UserBean) request.getSession().getAttribute(ApplicationConstants.LOGIN_BEAN);
+		int uid =userData.getUid();
+		EmployeeDetailsModel empModel = (EmployeeDetailsModel)request.getSession().getAttribute(ApplicationConstants.EMPLOYEE_REGISTRATION_DETAILS);
+		int sid =empModel.getStreamId();
+		 List<EmployeeModel> reportdetails = userServiceImpl.getEmployeesReportingDetails();
+		List<AssetTicketModel> assetmodel = userServiceImpl.getAssetTicket();
+		if(sid == 6){
+			request.setAttribute("ticketDetails", assetmodel);
+			}
+		else{
+			List<AssetTicketModel> individual = new ArrayList<AssetTicketModel>();
+			
+			for(AssetTicketModel ticket :assetmodel)
+			{
+				if(ticket.getRisedby()==uid)
+				{
+					individual.add(ticket);
+				}
+			request.setAttribute("ticketDetails",individual);
+			}
+		    }
+		
+	    request.setAttribute("empdetails",reportdetails);
+}catch(Exception e){
+			logger.error(e.getMessage());
+		}
+		return "viewticket";
+		
+	}
+	
+	@RequestMapping("/updateticketstatus")
+	public String updateTicketStatus(HttpServletRequest request) throws DBUpdateException{
+		try{
+		int atid = Integer.valueOf(request.getParameter("atid"));
+		logger.info(atid);
+		String thstatus = request.getParameter("ts");
+		logger.info(thstatus);
+		String rstatus = request.getParameter("rs");
+		logger.info(rstatus);
+		String bstatus = request.getParameter("bs");
+		logger.info(bstatus);
+		Date today = new Date();
+		UserBean userData = (UserBean) request.getSession().getAttribute(ApplicationConstants.LOGIN_BEAN);
+		int uid =userData.getUid();
+		
+		if(thstatus.equals("NA")){
+			AssetTicketModel model = new AssetTicketModel();
+			model.setApprovedby(uid);
+			model.setApproveddate(today);
+			model.setAtid(atid);
+		
+			logger.info(model);
+			model = userServiceImpl.updateAssetStatus(model);
+		}
+		else if(rstatus.equals("NF")){
+			AssetTicketModel model = new AssetTicketModel();
+			model.setApprovedby(uid);
+			model.setApproveddate(today);
+			model.setAtid(atid);
+			
+			logger.info(model);
+			model = userServiceImpl.updateRstatusOfAssetTicket(model);
+		}
+		else{
+			AssetTicketModel model = new AssetTicketModel();
+			model.setApprovedby(uid);
+			model.setApproveddate(today);
+			model.setAtid(atid);
+		
+			logger.info(model);
+			model =userServiceImpl.updateBstatusOfAssetTicket(model);
+		}
+		}catch(Exception e){
+			logger.error(e.getMessage());
+		}
+		
+		
+		return "viewticket";
+		
+	}
+	@RequestMapping("/createBranch")
+	public String createprojectform(){
+		return "createbranch";
+	}
+	@RequestMapping("/savebranch")
+	public String saveNewBranch(HttpServletRequest request){
+		try{
+			logger.info("Enter into saveNewBranch");
+			NewBranchModel branch =buildNewBranchDetails(request);
+			branch=userServiceImpl.saveBranchDetails(branch);
+			if(null!=branch){
+				request.setAttribute("successmessage", "Branch Created Successfully");
+			}
+			else{
+				request.setAttribute("message", " already exists");
+			
+			}
+		}catch(Exception e)
+		{
+			request.setAttribute("errormessage", "Not registered");
+			logger.info("Exit From saveNewBranch");
+		}
+			return "forward:/createBranch";
+		
+		}
+	private NewBranchModel buildNewBranchDetails (HttpServletRequest request) {
+		logger.info("enter into buildNewBranchDetails");
+        NewBranchModel branch=new NewBranchModel();
+        try{
+        	branch.setBranchname(request.getParameter("bname"));
+        	branch.setState(request.getParameter("state"));
+        	Date createddate =new Date();
+        	branch.setCreateddate(createddate);
+        
+        logger.info(branch);
+	}catch(Exception e){
+		logger.error(e.getMessage());
+	}
+	logger.info("Exit From buildNewBranchDetails");
+	return branch;
+}
+	
+			
+			
+	
+		
+	}
+

@@ -1,0 +1,17 @@
+package com.bamsa.db.util;
+
+public class ErrorConstants {
+	public static final String CLOCK_DETAILS_UPDATE_FAILED = "CDUF 001";
+	public static final String EMPLOYEE_DETAILS_UPDATE_FAILED ="EDUF 001";
+	public static final String TASK_DETAILS_UPDATE_FAILED ="TDUF 001";
+	public static final String UPDATE_PERCENTAGE_FAILED ="UPF 001";
+	public static final String RESET_PASSWORD_FAILED="RPF 001";
+	public static final String TICKET_DETAILS_FAILED="TDF 001";
+	public static final String UPDATE_THSTATUS_FAILED="UTF 001";
+	public static final String UPDATE_GRIEVANCETICKET_FAILED="UGT 001";
+	public static final String UPDATE_EMPLOYEEREPORTTO_FAIL="UET 001";
+	public static final String CANDIDTAE_DETAILS_UPDATE_FAILED="CSDUF 001";
+	public static final String OPENING_DETAILS_UPDATE_FAILED="ODUF 001";
+	public static final String HOTLIST_DETAILS_UPDATE_FAILED="HDUF 001";
+	public static final String ACCOUNT_DETAILS_UPDATE_FAILED="ADUF 001";
+}

@@ -1,0 +1,42 @@
+package com.bamsa.db.util;
+
+public class DBConstants {
+	public final static String LOAD_USER_LOGIN = "LOAD_USER_LOGIN";
+	public final static String LOAD_CLOCK_DETAILS ="LOAD_CLOCK_DETAILS";
+	public final static String UPDATE_CLOCK_DETAILS="UPDATE_CLOCK_DETAILS";
+	public final static String MODIFY_EMP_DETAILS ="MODIFY_EMP_DETAILS";
+	public final static String UPDATE_EMPLOYEE_DETAILS="UPDATE_EMPLOYEE_DETAILS";
+	public final static String LOAD_EMPLOYEE_DETAILS="LOAD_EMPLOYEE_DETAILS";
+	public final static String LOAD_EMPLOYEE_TASK="LOAD_EMPLOYEE_TASK";
+	public final static String LOAD_PRESENT_EMPDETAILS="LOAD_PRESENT_EMPDETAILS";
+	public final static String LOAD_EMPLOYEES_UNDER_EMPLOYEE="LOAD_EMPLOYEES_UNDER_EMPLOYEE";
+	public final static String LOAD_ALL_EMPLOYEES="LOAD_ALL_EMPLOYEES";
+	public final static String LOAD_ALL_EMPLOYEE_STATUS="LOAD_ALL_EMPLOYEE_STATUS";
+	public final static String UPDATE_TASK_DETAILS="UPDATE_TASK_DETAILS";
+	public final static String LOAD_ALL_EMPLOYEE_DETAILS="LOAD_ALL_EMPLOYEE_DETAILS";
+	public final static String LOAD_ALL_GRIEVANCE_DETAILS="LOAD_ALL_GRIEVANCE_DETAILS";
+	public final static String LOAD_EMPLOYEE_PROJECT_DETAILS="LOAD_EMPLOYEE_PROJECT_DETAILS";
+	public final static String UPDATE_PERCENTAGE="UPDATE_PERCENTAGE";
+	public final static String LOAD_INDIVIDUAL_TASKS_DETAILS="LOAD_INDIVIDUAL_TASKS_DETAILS";
+	public final static String RESET_PASSWORD="RESET_PASSWORD";
+	public final static String DEPARTMENT_DETAILS="DEPARTMENT_DETAILS";
+	public final static String REPORTING_DETAILS="REPORTING_DETAILS";
+	public final static String LOAD_LICENSE_DETAILS="LOAD_LICENSE_DETAILS";
+	public final static String LOAD_CONSUMABLE_DETAILS="LOAD_CONSUMABLE_DETAILS";
+	public final static String LOAD_COMPANY_ASSETS="LOAD_COMPANY_ASSETS";
+	public final static String LOAD_COMPANY_ACCESSORY="LOAD_COMPANY_ACCESSORY";
+	public final static String LOAD_COMPANY_COMPONENT="LOAD_COMPANY_COMPONENT";
+	public final static String LOAD_ASSET_TICKETS="LOAD_ASSET_TICKETS";
+	public final static String UPDATE_BSTATUS="UPDATE_BSTATUS";
+	public final static String UPDATE_RSTATUS="UPDATE_RSTATUS";
+	public final static String UPDATE_ASSET_THSTATUS="UPDATE_ASSET_THSTATUS";
+	public final static String LOAD_EMAILS_EMPLOYEE="LOAD_EMAILS_EMPLOYEE";
+	public final static String UPDATE_GRIEVCETICKET="UPDATE_GRIEVCETICKET";
+	public final static String UPDATE_EMPLOYEE_EDIT_DETAILS="UPDATE_EMPLOYEE_EDIT_DETAILS";
+	public final static String LOAD_PROJECT_DETAILS="LOAD_PROJECT_DETAILS";
+	public final static String LOAD_EMPLOYEES_UNDER_PROJECT="LOAD_EMPLOYEES_UNDER_PROJECT";
+	public final static String LOAD_TYPE_PROJECTS="LOAD_TYPE_PROJECTS";
+	public final static String BRANCHNAME_DETAILS="BRANCHNAME_DETAILS";
+    public final static String LOAD_CANDIDATE_DETAILS="LOAD_CANDIDATE_DETAILS";
+
+}

@@ -1,0 +1,58 @@
+package com.bamsa.db.dao.impl;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.stereotype.Repository;
+
+import com.bamsa.db.beans.OpeningInfoBean;
+import com.bamsa.db.dao.OpeningInfoDAO;
+@Repository
+public class OpeningInfoDAOImpl implements OpeningInfoDAO {
+	@Autowired
+	private Properties dbProps;
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+	private static Logger logger = Logger.getLogger(OpeningInfoDAOImpl.class);
+	@Override
+	public OpeningInfoBean saveOpeningdetails(OpeningInfoBean openings) {
+		logger.info("enter into saveOpeningdetails");
+		DataSource dataSource = jdbcTemplate.getDataSource();
+		try{
+		if(null != openings){
+			SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(dataSource);
+			
+			Map<String,Object> recordParameters = new HashMap<String,Object>();
+			recordParameters.put("positionid", openings.getPositionid());
+			recordParameters.put("positiontitle", openings.getPositiontitle());
+			recordParameters.put("state", openings.getState());
+			recordParameters.put("city", openings.getCity());
+			recordParameters.put("primaryskill", openings.getPrimaryskill());
+			recordParameters.put("secondaryskill", openings.getSecondaryskill());
+			recordParameters.put("description", openings.getDescription());
+			recordParameters.put("rate", openings.getRate());
+			recordParameters.put("primevendor", openings.getPrimevendor());
+			recordParameters.put("endclient", openings.getEndclient());
+			recordParameters.put("createdby", openings.getCreatedby());
+			recordParameters.put("createddate", openings.getCreateddate());
+			logger.info(recordParameters);
+            jdbcInsert.withTableName("openinginfo")
+			.usingGeneratedKeyColumns("rqid");	
+			openings.setRqid(jdbcInsert.executeAndReturnKey(recordParameters).intValue());
+		}
+		}catch(Exception e){
+			logger.error(e.getMessage());
+		}
+		logger.info("exit from saveContactdetails");
+		return openings;		
+	}
+
+
+}

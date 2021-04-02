@@ -1,0 +1,157 @@
+package com.bamsa.db.dao.impl;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.stereotype.Repository;
+
+import com.bamsa.db.beans.ClockTimeBean;
+import com.bamsa.db.beans.Employee;
+import com.bamsa.db.beans.EmployeeDetails;
+import com.bamsa.db.dao.EmployeeDetailsDAO;
+import com.bamsa.db.exceptions.DBUpdateException;
+import com.bamsa.db.impls.mappers.EmpDetRowMapper;
+import com.bamsa.db.impls.mappers.EmpDetaiRowMapper;
+import com.bamsa.db.impls.mappers.EmployeeDetailsRowMapper;
+import com.bamsa.db.impls.mappers.EmployeePresentRowMapper;
+import com.bamsa.db.impls.mappers.EmployeesAllRowMapper;
+import com.bamsa.db.impls.stmtsetters.EmployeeReportToDetailsStmtSetter;
+import com.bamsa.db.impls.stmtsetters.UserDetailStmtSetter;
+import com.bamsa.db.util.DBConstants;
+import com.bamsa.db.util.ErrorConstants;
+
+@Repository
+public class EmployeeDetailsDAOImpl implements EmployeeDetailsDAO{
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+	
+	@Autowired
+	private Properties dbProps;
+	private static Logger logger = Logger.getLogger(EmployeeDetailsDAOImpl.class);
+	@Override
+	public EmployeeDetails saveEmployeeDetails(EmployeeDetails empDetails) {
+		logger.info("enter into saveEmployeeDetails");
+		DataSource dataSource = jdbcTemplate.getDataSource();
+		try{
+		if(null != empDetails){
+			SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(dataSource);
+			Map<String,Object> recordParameters = new HashMap<String,Object>();
+			recordParameters.put("empid",empDetails.getEmpId());
+			recordParameters.put("uid",empDetails.getUid());
+			recordParameters.put("name",empDetails.getName());
+			recordParameters.put("dob",empDetails.getDob());
+			recordParameters.put("doj",empDetails.getDoj());
+			recordParameters.put("mobileno",empDetails.getMobileNo());
+			recordParameters.put("emermobileno",empDetails.getEmergencyMobileNo());
+			recordParameters.put("email",empDetails.getEmail());
+			recordParameters.put("gender",empDetails.getGender());
+			recordParameters.put("picture",empDetails.getPicture());
+			recordParameters.put("salary",empDetails.getSalary());
+			recordParameters.put("intime",empDetails.getInTime());
+			recordParameters.put("outtime",empDetails.getOutTime());
+			recordParameters.put("branchname", empDetails.getBranchname());
+			logger.info(recordParameters);
+             jdbcInsert.withTableName("employeedetails")
+			.usingGeneratedKeyColumns("udid");	
+			empDetails.setUdid(jdbcInsert.executeAndReturnKey(recordParameters).intValue());
+		}
+		}catch(Exception e){
+			logger.error(e.getMessage());
+		}
+		logger.info("exit from saveEmployeeDetails");
+		return empDetails;		
+	}
+	@Override
+	public EmployeeDetails getEmployeeDetails(int uid)
+	{
+		logger.info("enter into getEmployeeDetails");
+		String empdetailsquery =dbProps.getProperty(DBConstants.MODIFY_EMP_DETAILS);
+		List<EmployeeDetails> emp1= jdbcTemplate.query(empdetailsquery, new Object[]{uid}, new EmpDetaiRowMapper());
+		logger.info(emp1);
+		logger.info("exit from getEmployeeDetails");
+		return emp1.get(0);
+	}
+	
+	@Override
+    public EmployeeDetails updateEmployeeDetails(EmployeeDetails employeeDetails) throws DBUpdateException{
+        logger.info("Enter into updateEmployeeDetailsdao impl ");
+       
+		int uid = employeeDetails.getUid();
+		try{
+		logger.info(uid);
+        String updateQuery = dbProps.getProperty(DBConstants.UPDATE_EMPLOYEE_DETAILS);
+        int numberRecordsUpdated = jdbcTemplate.update(updateQuery,new UserDetailStmtSetter(employeeDetails));
+        if(numberRecordsUpdated == 0){
+            DBUpdateException dbException = new DBUpdateException("Zero Records updated");
+            dbException.setErrorCode(ErrorConstants.EMPLOYEE_DETAILS_UPDATE_FAILED);
+            throw dbException;
+        }
+		}catch(Exception e){
+			logger.error(e.getMessage());
+		}
+        logger.info("exit from updateEmployeeDetailsdao impl");
+        return employeeDetails;
+    }
+	@Override
+	public List<EmployeeDetails> presentEmployeeDetails()
+	{
+		logger.info("Enter into presentEmployeeDetails");
+		String presentempdetailsquery = dbProps.getProperty(DBConstants.LOAD_PRESENT_EMPDETAILS);
+		
+		List<EmployeeDetails> presentempdt =jdbcTemplate.query(presentempdetailsquery,new EmployeePresentRowMapper());
+	    logger.info(presentempdt);
+	    logger.info("exit from presentEmployeeDetails");
+		return presentempdt;
+		
+	}
+	@Override
+	 public List<EmployeeDetails> getAllEmployees()
+	 {
+		 logger.info("Enter into getAllEmployees");
+		 String allemployeesquery = dbProps.getProperty(DBConstants.LOAD_ALL_EMPLOYEES);
+		 List<EmployeeDetails> allemployees =jdbcTemplate.query(allemployeesquery,new EmployeesAllRowMapper());
+		 logger.info(allemployees);
+		 logger.info("exit from getAllEmployees");
+		 return allemployees;
+	 }
+	@Override
+	public EmployeeDetails getEmplDetails(int uid) {
+		logger.info("enter into getEmployeeDetails");
+		String empdetquery=dbProps.getProperty(DBConstants.LOAD_ALL_EMPLOYEE_DETAILS);
+		List<EmployeeDetails> empl= jdbcTemplate.query(empdetquery, new Object[]{uid}, new EmpDetRowMapper());
+	    return empl.get(0);
+	}
+	
+	public EmployeeDetails updateEmployeeReporttoDetails(EmployeeDetails bean)throws DBUpdateException
+	{
+		logger.info("enter into updateEmployeeReporttoDetails");
+	    try{
+		String updatereport=dbProps.getProperty(DBConstants.UPDATE_EMPLOYEE_EDIT_DETAILS);
+		int numberRecordsUpdated=jdbcTemplate.update(updatereport,new EmployeeReportToDetailsStmtSetter(bean));
+		if(numberRecordsUpdated == 0){
+			DBUpdateException dbException = new DBUpdateException("Zero Records updated");
+            dbException.setErrorCode(ErrorConstants.UPDATE_EMPLOYEEREPORTTO_FAIL);
+            throw dbException;
+		}
+	    
+	    }catch(Exception e){
+	    
+	    	logger.error(e.getMessage());
+	    	
+	    }
+	
+	    logger.info("exit from  updateEmployeeReporttoDetails");
+	    return bean;
+	}
+	
+	
+}

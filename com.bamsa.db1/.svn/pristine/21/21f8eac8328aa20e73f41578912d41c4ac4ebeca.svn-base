@@ -1,0 +1,38 @@
+package com.bamsa.db.impls.mappers;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.apache.log4j.Logger;
+import org.springframework.jdbc.core.RowMapper;
+
+
+import com.bamsa.db.beans.CandidateDetails;
+
+public class CandidateDetailsRowMapper implements RowMapper<CandidateDetails>{
+
+	
+	private static Logger logger = Logger.getLogger(CandidateDetailsRowMapper.class);
+	@Override
+	public CandidateDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
+		logger.info("enter into mapRow ");
+		CandidateDetails ticket=new CandidateDetails();
+		ticket.setFirstName(rs.getString("firstname"));
+		ticket.setMiddleName(rs.getString("middlename"));
+		ticket.setLastName(rs.getString("lastname"));
+		ticket.setEmailid(rs.getString("email"));
+		ticket.setPhoneNo(rs.getString("phone"));
+		ticket.setMobile(rs.getString("mobile"));
+		ticket.setCountry(rs.getString("country"));
+		ticket.setCurrentLoc(rs.getString("currentlocation"));
+		ticket.setAddress(rs.getString("address"));
+		ticket.setPreferredLoc1(rs.getString("preferredlocation1"));
+		ticket.setPreferredLoc2(rs.getString("preferredlocation2"));
+		ticket.setZipCode(rs.getString("zipcode"));
+		ticket.setAvailableFrom(rs.getDate("availablefrom"));
+		
+		logger.info(ticket);
+        logger.info("exit from AssetTicketBean");
+        return ticket;
+	}
+}

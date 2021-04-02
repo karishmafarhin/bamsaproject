@@ -1,0 +1,119 @@
+package com.bamsa.db.dao.impl;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.stereotype.Repository;
+
+import com.bamsa.db.beans.CandidateInfoBean;
+import com.bamsa.db.beans.EmployeeDetails;
+import com.bamsa.db.dao.CandidateInfoDAO;
+import com.bamsa.db.impls.mappers.AssignedToRowMapper;
+import com.bamsa.db.impls.mappers.ReportUserRowMapper;
+import com.bamsa.db.util.DBConstants;
+
+@Repository
+public class CandidateInfoDAOImpl implements CandidateInfoDAO{
+	@Autowired
+	private Properties dbProps;
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+	private static Logger logger = Logger.getLogger(CandidateInfoDAOImpl.class);
+	@Override
+	public CandidateInfoBean saveCandidatedetails(CandidateInfoBean details) {
+		logger.info("enter into saveCandidatedetails");
+		DataSource dataSource = jdbcTemplate.getDataSource();
+		try{
+		if(null != details){
+			SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(dataSource);
+			
+			Map<String,Object> recordParameters = new HashMap<String,Object>();
+			recordParameters.put("firstname", details.getFirstName());
+			recordParameters.put("middlename", details.getMiddleName());
+			recordParameters.put("lastname", details.getLastName());
+			recordParameters.put("email", details.getEmailid());
+			recordParameters.put("phone", details.getPhoneNo());
+			recordParameters.put("mobile", details.getMobile());
+			recordParameters.put("country", details.getCountry());
+			recordParameters.put("currentlocation", details.getCurrentLoc());
+			recordParameters.put("address",details.getAddress());
+			recordParameters.put("preferredlocation1",details.getPreferredLoc1());
+			recordParameters.put("preferredlocation2", details.getPreferredLoc2());
+			recordParameters.put("zipCode", details.getZipCode());
+			recordParameters.put("availablefrom", details.getAvailableFrom());
+			recordParameters.put("noticeperiod", details.getNoticePeriod());
+			recordParameters.put("sourcedby", details.getSourcedBy());
+			recordParameters.put("sourcedfrom", details.getSourcedFrom());
+			recordParameters.put("licenseno", details.getLicenseNo());
+			recordParameters.put("passportno", details.getPassportNo());
+			recordParameters.put("visastatus", details.getVisaStatus());
+			recordParameters.put("dateofbirth", details.getDob());
+			recordParameters.put("gender", details.getGender());
+			recordParameters.put("fathername", details.getFatherName());
+			recordParameters.put("mothername", details.getMotherName());
+			recordParameters.put("nationality", details.getNationality());
+			recordParameters.put("hobbies", details.getHobbies());
+			recordParameters.put("maritalstatus", details.getMaritalStatus());
+			recordParameters.put("candidatedescription", details.getCandidateDesc());
+			recordParameters.put("assignedto", details.getAssignedto());
+			recordParameters.put("hpstatus", details.getHpstatus());
+			recordParameters.put("createddate", details.getCreatedDate());
+			recordParameters.put("candidatecategory", details.getCandidateCategory());
+			recordParameters.put("candidatesubcategory", details.getCandidateSubcategory());
+			recordParameters.put("candidatenoofjobschanged", details.getCandidateNoofjobschanged());
+			recordParameters.put("currentemployer", details.getCurrentEmployer());
+			recordParameters.put("totalworkexpyrs", details.getTotalworkExpyrs());
+			recordParameters.put("totalworkexpmonths", details.getTotalworkExpmonths());
+			recordParameters.put("gapperiod", details.getGapPeriod());
+			recordParameters.put("relexp", details.getRelevantexp());
+			recordParameters.put("jobtitle", details.getJobtitile());
+			recordParameters.put("objectives", details.getObjectives());
+			recordParameters.put("achievements", details.getAchievments());
+			recordParameters.put("creferences", details.getReferences());
+			
+			recordParameters.put("resumetitle", details.getResumetitle());
+			recordParameters.put("resumefilename", details.getResumefilename());
+			recordParameters.put("qualification", details.getQualification());
+			recordParameters.put("languagesknown", details.getLanguagesknown());
+			recordParameters.put("currentsalary", details.getCurrentsalary());
+			recordParameters.put("expectedsalary",details.getExpectedsalary());
+			recordParameters.put("primaryskills", details.getPrimaryskills());
+			recordParameters.put("coverletter", details.getCoverletter());
+			recordParameters.put("resume", details.getResume());
+			recordParameters.put("state", details.getState());
+			recordParameters.put("city", details.getCity());
+			recordParameters.put("sourcing", details.getSourcing());
+			recordParameters.put("fax", details.getFax());
+			recordParameters.put("candidatestatus", details.getCandidatestatus());
+			logger.info(recordParameters);
+            jdbcInsert.withTableName("candidateinformation")
+			.usingGeneratedKeyColumns("ciid");	
+			details.setCiid(jdbcInsert.executeAndReturnKey(recordParameters).intValue());
+		}
+		}catch(Exception e){
+			logger.error(e.getMessage());
+		}
+		logger.info("exit from saveCandidatedetails");
+		return details;		
+	}
+	@Override
+	public List<EmployeeDetails> getAssignedtodetails() {
+		logger.info("enter into getAssignedtodetails ");
+		String empdetails =dbProps.getProperty(DBConstants.SOURCE_ASSIGNTO_DETAILS);
+		logger.info(empdetails);
+		List<EmployeeDetails> details=jdbcTemplate.query(empdetails,new AssignedToRowMapper());
+		logger.info(details);
+		logger.info("exit from getAssignedtodetails ");
+		return details;
+	}
+	
+
+}

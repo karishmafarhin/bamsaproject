@@ -1,0 +1,47 @@
+package com.bamsa.web.util;
+
+public class ApplicationConstants {
+	public static final String LOGIN_BEAN = "LOGIN_BEAN";
+	public static final int MAX_FILE_SIZE = 40000;
+	public static final char USER_STATUS_ACTIVE= 'A';
+	public static final int TRAINEE_LEVEL= 1;
+	public static final int ASSOCIATE_LEVEL= 2;
+	public static final int DEV_OR_ENGINEER_LEVEL= 3;
+	public static final int SENIOR_LEVEL= 4;
+	public static final int TEAM_LEAD= 5;
+	public static final int TECH_LEAD_OR_PROJECT_LEAD= 6;
+	public static final int MANAGER= 7;
+	public static final int SENIOR_MANAGER= 8;
+	public static final int JAVA = 1;
+	public static final int PHP = 2;
+	public static final int ANDROID = 3;
+	public static final int UI = 4;
+	public static final int ACCOUNTS = 5;
+	public static final int ADMINISTRATION_OPERATION = 6;
+	public static final int BENCHSALES = 7;
+	public static final int US_IT=8;
+	public static final int PAYROLL_AND_COMPENSATION = 9;
+	public static final int TRAINING_AND_DEVELOPMENT = 10;
+	public static final int BUSINESS_DEVELOPMENT_AND_TRAINING = 11;
+	public static final int TESTING=12;
+	public static final int HR_EXECUTIVE=13;
+	public static final int PAY_AND_BENEFITS=1;
+	public static final int WORK_LOADS=2;
+	public static final int WORK_CONDITIONS=3;
+	public static final int UNION_AND_MANAGEMENT_RELATIONS=4;
+	public static final int LESS_SEVERE=1;
+	public static final int MODERATE=2;
+	public static final int NORAMAL=3;
+	public static final int SEVERE=4;
+	public static final int MORE_SEVERE=5;
+	public static final String EMPLOYEE_REGISTRATION_DETAILS="EMPLOYEE REGISTRATION DETAILS";
+	public static final String ARCHIVED="ARCHIVED";
+	public static final String BROKEN_NOT_FIXABLE="BROKEN NOT FIXABLE";
+	public static final String LOST_OR_STOLEN="LOST OR STOLEN";
+	public static final String OUT_OF_DIAGNOSTICS="OUT OF DIAGNOSTICS";
+	public static final String OUT_FOR_REPAIR="OUT FOR REPAIR";
+	public static final String PENDING="PENDING";
+	public static final String READY_TO_DEPLOY="READY TO DEPLOY";
+	public static final int IMAGE_FILE_SIZE=5100;
+	public static final String FILE_PATH = "FILE_PATH";
+}

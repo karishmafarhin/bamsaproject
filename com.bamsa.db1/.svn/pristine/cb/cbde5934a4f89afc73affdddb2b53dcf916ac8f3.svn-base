@@ -1,0 +1,80 @@
+package com.bamsa.db.beans;
+
+import org.springframework.stereotype.Component;
+
+@Component
+
+public class CandidateSkillsInfoBean {
+	
+	private int ciid;
+	private int csiid;
+	private String resumetitle;
+	private String resumefilename;
+	private String qualification;
+	private String languagesknown;
+	private float currentsalary;
+	private float expectedsalary;
+	private String primaryskills;
+	
+	public int getCsiid() {
+		return csiid;
+	}
+	public void setCsiid(int csiid) {
+		this.csiid = csiid;
+	}
+	public int getCiid() {
+		return ciid;
+	}
+	public void setCiid(int ciid) {
+		this.ciid = ciid;
+	}
+	public String getResumetitle() {
+		return resumetitle;
+	}
+	public void setResumetitle(String resumetitle) {
+		this.resumetitle = resumetitle;
+	}
+	public String getResumefilename() {
+		return resumefilename;
+	}
+	public void setResumefilename(String resumefilename) {
+		this.resumefilename = resumefilename;
+	}
+	public String getQualification() {
+		return qualification;
+	}
+	public void setQualification(String qualification) {
+		this.qualification = qualification;
+	}
+	public String getLanguagesknown() {
+		return languagesknown;
+	}
+	public void setLanguagesknown(String languagesknown) {
+		this.languagesknown = languagesknown;
+	}
+	public float getCurrentsalary() {
+		return currentsalary;
+	}
+	public void setCurrentsalary(float currentsalary) {
+		this.currentsalary = currentsalary;
+	}
+	public float getExpectedsalary() {
+		return expectedsalary;
+	}
+	public void setExpectedsalary(float expectedsalary) {
+		this.expectedsalary = expectedsalary;
+	}
+	public String getPrimaryskills() {
+		return primaryskills;
+	}
+	public void setPrimaryskills(String primaryskills) {
+		this.primaryskills = primaryskills;
+	}
+	@Override
+	public String toString() {
+		return "CandidateSkillsInfoBean [csiid=" + csiid + ", ciid=" + ciid + ", resumetitle=" + resumetitle
+				+ ", resumefilename=" + resumefilename + ", qualification=" + qualification + ", languagesknown="
+				+ languagesknown + ", currentsalary=" + currentsalary + ", expectedsalary=" + expectedsalary
+				+ ", primaryskills=" + primaryskills + "]";
+	}
+}

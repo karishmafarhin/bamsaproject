@@ -1,0 +1,181 @@
+package com.bamsa.db.beans;
+
+import java.sql.Blob;
+import java.util.Arrays;
+import java.util.Date;
+
+import org.springframework.stereotype.Component;
+
+@Component
+public class CandidateInfoBean {
+
+	private int ciid;
+	private String firstName;
+	private String middleName;
+	private String lastName;
+	private String emailid;
+	private String mobile;
+	private Date availableFrom;
+	private String visaStatus;
+	private char gender;
+	private Date createdDate;
+	private byte[] coverletter;
+	private byte[] resume;
+	private String state;
+	private String city;
+	private String typeofConsultant;
+	private char hotlist;
+	private char relocate;
+	private String primaryskills;
+	private String ssn;
+	private String billRateType;
+	private Float rate;
+	private int createdby;
+	
+	public int getCreatedby() {
+		return createdby;
+	}
+	public void setCreatedby(int createdby) {
+		this.createdby = createdby;
+	}
+	public int getCiid() {
+		return ciid;
+	}
+	public void setCiid(int ciid) {
+		this.ciid = ciid;
+	}
+	public String getFirstName() {
+		return firstName;
+	}
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+	public String getMiddleName() {
+		return middleName;
+	}
+	public void setMiddleName(String middleName) {
+		this.middleName = middleName;
+	}
+	public String getLastName() {
+		return lastName;
+	}
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+	public String getEmailid() {
+		return emailid;
+	}
+	public void setEmailid(String emailid) {
+		this.emailid = emailid;
+	}
+	public String getMobile() {
+		return mobile;
+	}
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+	public Date getAvailableFrom() {
+		return availableFrom;
+	}
+	public void setAvailableFrom(Date availableFrom) {
+		this.availableFrom = availableFrom;
+	}
+	public String getVisaStatus() {
+		return visaStatus;
+	}
+	public void setVisaStatus(String visaStatus) {
+		this.visaStatus = visaStatus;
+	}
+	public char getGender() {
+		return gender;
+	}
+	public void setGender(char gender) {
+		this.gender = gender;
+	}
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+	public byte[] getCoverletter() {
+		return coverletter;
+	}
+	public void setCoverletter(byte[] coverletter) {
+		this.coverletter = coverletter;
+	}
+	public byte[] getResume() {
+		return resume;
+	}
+	public void setResume(byte[] resume) {
+		this.resume = resume;
+	}
+	public String getState() {
+		return state;
+	}
+	public void setState(String state) {
+		this.state = state;
+	}
+	public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
+	}
+	public String getTypeofConsultant() {
+		return typeofConsultant;
+	}
+	public void setTypeofConsultant(String typeofConsultant) {
+		this.typeofConsultant = typeofConsultant;
+	}
+	public char getHotlist() {
+		return hotlist;
+	}
+	public void setHotlist(char hotlist) {
+		this.hotlist = hotlist;
+	}
+	public char getRelocate() {
+		return relocate;
+	}
+	public void setRelocate(char relocate) {
+		this.relocate = relocate;
+	}
+	public String getPrimaryskills() {
+		return primaryskills;
+	}
+	public void setPrimaryskills(String primaryskills) {
+		this.primaryskills = primaryskills;
+	}
+	public String getSsn() {
+		return ssn;
+	}
+	public void setSsn(String ssn) {
+		this.ssn = ssn;
+	}
+	public String getBillRateType() {
+		return billRateType;
+	}
+	public void setBillRateType(String billRateType) {
+		this.billRateType = billRateType;
+	}
+	public Float getRate() {
+		return rate;
+	}
+	public void setRate(Float rate) {
+		this.rate = rate;
+	}
+	@Override
+	public String toString() {
+		return "CandidateInfoBean [ciid=" + ciid + ", firstName=" + firstName + ", middleName=" + middleName
+				+ ", lastName=" + lastName + ", emailid=" + emailid + ", mobile=" + mobile + ", availableFrom="
+				+ availableFrom + ", visaStatus=" + visaStatus + ", gender=" + gender + ", createdDate=" + createdDate
+				+ ", coverletter=" + Arrays.toString(coverletter) + ", resume=" + Arrays.toString(resume) + ", state="
+				+ state + ", city=" + city + ", typeofConsultant=" + typeofConsultant + ", hotlist=" + hotlist
+				+ ", relocate=" + relocate + ", primaryskills=" + primaryskills + ", ssn=" + ssn + ", billRateType="
+				+ billRateType + ", rate=" + rate + ", createdby=" + createdby + "]";
+	}
+	
+	
+	
+	
+}

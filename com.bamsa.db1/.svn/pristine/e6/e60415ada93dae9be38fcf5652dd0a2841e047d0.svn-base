@@ -1,0 +1,295 @@
+package com.bamsa.db.beans;
+
+import java.util.Date;
+
+import org.springframework.stereotype.Component;
+
+@Component
+public class CandidateInfoBean {
+	private int ciid;
+	private String firstName;
+	private String middleName;
+	private String lastName;
+	private String emailid;
+	private String phoneNo;
+	private String mobile;
+	private String country;
+	private String currentLoc;
+	private String address;
+	private String preferredLoc1;
+	private String preferredLoc2;
+	private String zipCode;
+	private Date availableFrom;
+	private String noticePeriod;
+	private String sourcedBy;
+	private String sourcedFrom;
+	private String licenseNo;
+	private String passportNo;
+	private String visaStatus;
+	private Date dob;
+	private char gender;
+	private String fatherName;
+	private String motherName;
+	private String nationality;
+	private String hobbies;
+	private String maritalStatus;
+	private String candidateDesc;
+	private String assignedto;
+	private String inpipleOrhighpofile;
+	private Date createdDate;
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+	public int getCiid() {
+		return ciid;
+	}
+	public void setCiid(int ciid) {
+		this.ciid = ciid;
+	}
+	public String getFirstName() {
+		return firstName;
+	}
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+	public String getMiddleName() {
+		return middleName;
+	}
+	public void setMiddleName(String middleName) {
+		this.middleName = middleName;
+	}
+	public String getLastName() {
+		return lastName;
+	}
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+	public String getEmailid() {
+		return emailid;
+	}
+	public void setEmailid(String emailid) {
+		this.emailid = emailid;
+	}
+	public String getPhoneNo() {
+		return phoneNo;
+	}
+	public void setPhoneNo(String phoneNo) {
+		this.phoneNo = phoneNo;
+	}
+	public String getMobile() {
+		return mobile;
+	}
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+	public String getCountry() {
+		return country;
+	}
+	public void setCountry(String country) {
+		this.country = country;
+	}
+	public String getCurrentLoc() {
+		return currentLoc;
+	}
+	public void setCurrentLoc(String currentLoc) {
+		this.currentLoc = currentLoc;
+	}
+	public String getAddress() {
+		return address;
+	}
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	public String getPreferredLoc1() {
+		return preferredLoc1;
+	}
+	public void setPreferredLoc1(String preferredLoc1) {
+		this.preferredLoc1 = preferredLoc1;
+	}
+	public String getPreferredLoc2() {
+		return preferredLoc2;
+	}
+	public void setPreferredLoc2(String preferredLoc2) {
+		this.preferredLoc2 = preferredLoc2;
+	}
+	public String getZipCode() {
+		return zipCode;
+	}
+	public void setZipCode(String zipCode) {
+		this.zipCode = zipCode;
+	}
+	public Date getAvailableFrom() {
+		return availableFrom;
+	}
+	public void setAvailableFrom(Date availableFrom) {
+		this.availableFrom = availableFrom;
+	}
+	public String getNoticePeriod() {
+		return noticePeriod;
+	}
+	public void setNoticePeriod(String noticePeriod) {
+		this.noticePeriod = noticePeriod;
+	}
+	public String getSourcedBy() {
+		return sourcedBy;
+	}
+	public void setSourcedBy(String sourcedBy) {
+		this.sourcedBy = sourcedBy;
+	}
+	public String getSourcedFrom() {
+		return sourcedFrom;
+	}
+	public void setSourcedFrom(String sourcedFrom) {
+		this.sourcedFrom = sourcedFrom;
+	}
+	public String getLicenseNo() {
+		return licenseNo;
+	}
+	public void setLicenseNo(String licenseNo) {
+		this.licenseNo = licenseNo;
+	}
+	public String getPassportNo() {
+		return passportNo;
+	}
+	public void setPassportNo(String passportNo) {
+		this.passportNo = passportNo;
+	}
+	public String getVisaStatus() {
+		return visaStatus;
+	}
+	public void setVisaStatus(String visaStatus) {
+		this.visaStatus = visaStatus;
+	}
+	public Date getDob() {
+		return dob;
+	}
+	public void setDob(Date dob) {
+		this.dob = dob;
+	}
+	public char getGender() {
+		return gender;
+	}
+	public void setGender(char gender) {
+		this.gender = gender;
+	}
+	public String getFatherName() {
+		return fatherName;
+	}
+	public void setFatherName(String fatherName) {
+		this.fatherName = fatherName;
+	}
+	public String getMotherName() {
+		return motherName;
+	}
+	public void setMotherName(String motherName) {
+		this.motherName = motherName;
+	}
+	public String getNationality() {
+		return nationality;
+	}
+	public void setNationality(String nationality) {
+		this.nationality = nationality;
+	}
+	public String getHobbies() {
+		return hobbies;
+	}
+	public void setHobbies(String hobbies) {
+		this.hobbies = hobbies;
+	}
+	public String getMaritalStatus() {
+		return maritalStatus;
+	}
+	public void setMaritalStatus(String maritalStatus) {
+		this.maritalStatus = maritalStatus;
+	}
+	public String getCandidateDesc() {
+		return candidateDesc;
+	}
+	public void setCandidateDesc(String candidateDesc) {
+		this.candidateDesc = candidateDesc;
+	}
+	public String getAssignedto() {
+		return assignedto;
+	}
+	public void setAssignedto(String assignedto) {
+		this.assignedto = assignedto;
+	}
+	public String getInpipleOrhighpofile() {
+		return inpipleOrhighpofile;
+	}
+	public void setInpipleOrhighpofile(String inpipleOrhighpofile) {
+		this.inpipleOrhighpofile = inpipleOrhighpofile;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("CandidateInfoBean [ciid=");
+		builder.append(ciid);
+		builder.append(",firstName");
+		builder.append(firstName);		
+		builder.append(", middleName=");
+		builder.append(middleName);
+		builder.append(", lastName=");
+		builder.append(lastName);
+		builder.append(", emailid=");
+		builder.append(emailid);
+		builder.append(", phoneNo=");
+		builder.append(phoneNo);
+		builder.append(", mobile=");
+		builder.append(mobile);
+		builder.append(",country");
+		builder.append(country);		
+		builder.append(", currentLoc=");
+		builder.append(currentLoc);
+		builder.append(", address=");
+		builder.append(address);
+		builder.append(", preferredLoc1=");
+		builder.append(preferredLoc1);
+		builder.append(", preferredLoc2=");
+		builder.append(preferredLoc2);
+		builder.append(", zipCode=");
+		builder.append(zipCode);
+		builder.append(", availableFrom=");
+		builder.append(availableFrom);
+		builder.append(",noticePeriod");
+		builder.append(noticePeriod);		
+		builder.append(", sourcedBy=");
+		builder.append(sourcedBy);
+		builder.append(", sourcedFrom=");
+		builder.append(sourcedFrom);
+		builder.append(", licenseNo=");
+		builder.append(licenseNo);
+		builder.append(", passportNo=");
+		builder.append(passportNo);
+		builder.append(", visaStatus=");
+		builder.append(visaStatus);
+		builder.append(", dob=");
+		builder.append(dob);
+		builder.append(", gender=");
+		builder.append(gender);
+		builder.append(", fatherName=");
+		builder.append(fatherName);
+		builder.append(",motherName");
+		builder.append(motherName);		
+		builder.append(", nationality=");
+		builder.append(nationality);
+		builder.append(", hobbies=");
+		builder.append(hobbies);
+		builder.append(", maritalStatus=");
+		builder.append(maritalStatus);
+		builder.append(", candidateDesc=");
+		builder.append(candidateDesc);
+		builder.append(", assignedto=");
+		builder.append(assignedto);
+		builder.append(", inpipleOrhighpofile=");
+		builder.append(inpipleOrhighpofile);
+		builder.append(", createdDate=");
+		builder.append(createdDate);
+		builder.append("]");
+		return builder.toString();
+	}
+}

@@ -1,0 +1,590 @@
+package com.bamsa.db.facade.impl;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.bamsa.db.beans.AssetTicketBean;
+import com.bamsa.db.beans.CandidateInfoBean;
+
+import com.bamsa.db.beans.ClockTimeBean;
+import com.bamsa.db.beans.CompanyAccessoryBean;
+import com.bamsa.db.beans.CompanyAssetsBean;
+import com.bamsa.db.beans.CompanyComponentBean;
+import com.bamsa.db.beans.CompanyConsumableBean;
+import com.bamsa.db.beans.CompanyLicensesBean;
+import com.bamsa.db.beans.ContactBean;
+import com.bamsa.db.beans.Employee;
+import com.bamsa.db.beans.EmployeeDetails;
+import com.bamsa.db.beans.EmployeeMappings;
+import com.bamsa.db.beans.EmployeeTask;
+import com.bamsa.db.beans.GrievanceDetails;
+import com.bamsa.db.beans.NewBranchBean;
+import com.bamsa.db.beans.NewProjectBean;
+import com.bamsa.db.beans.OpeningInfoBean;
+import com.bamsa.db.beans.TaskDetails;
+import com.bamsa.db.beans.User;
+import com.bamsa.db.facade.UserFunctions;
+import com.bamsa.db.dao.LoginDAO;
+import com.bamsa.db.dao.OpeningInfoDAO;
+import com.bamsa.db.dao.TimeSheetsDAO;
+import com.bamsa.db.exceptions.DBUpdateException;
+import com.bamsa.db.dao.AssetsDAO;
+import com.bamsa.db.dao.CandidateInfoDAO;
+import com.bamsa.db.dao.ContactDAO;
+import com.bamsa.db.dao.EmployeeDAO;
+import com.bamsa.db.dao.EmployeeDetailsDAO;
+import com.bamsa.db.dao.EmployeeMappingsDAO;
+import com.bamsa.db.dao.EmployeeTaskDAO;
+import com.bamsa.db.dao.GrievanceDetailsDAO;
+
+
+@Component
+public class UserFunctionsFacade implements UserFunctions {
+
+	@Autowired
+	LoginDAO loginDAOImpl;
+	@Autowired
+	EmployeeDAO employeeDAOImpl;
+	@Autowired
+	EmployeeDetailsDAO employeeDetailsDAOImpl;
+	@Autowired
+	EmployeeMappingsDAO employeeMappingsDAOImpl;
+	@Autowired
+	TimeSheetsDAO timeSheetsDAOImpl;
+	@Autowired
+	EmployeeTaskDAO employeeTaskDAOImpl;
+	@Autowired
+	GrievanceDetailsDAO grievancedetailsDAOImpl;
+	@Autowired
+	AssetsDAO assetsDAOImpl;
+	@Autowired
+	CandidateInfoDAO candidateinfoDAOImpl;
+	@Autowired
+	ContactDAO contactDAOImpl;
+	@Autowired
+	OpeningInfoDAO openingInfoDAOImpl;
+	private static Logger logger = Logger.getLogger(UserFunctionsFacade.class);
+	public User authenticateUser(User user){
+		logger.info("Enter into authenticateUser");
+		user = loginDAOImpl.loadUserLogin(user);
+		logger.info(user);
+		logger.info("Exit from authenticateUser");
+		return user;
+
+	}
+	public ClockTimeBean saveClockInDetails(ClockTimeBean clockInDetails){
+		logger.info("Enter into saveClockInDetails");
+		clockInDetails =timeSheetsDAOImpl.saveClockInDetails(clockInDetails);
+		logger.info(clockInDetails);
+		logger.info("Exit from  saveClockInDetails");
+		return clockInDetails;
+	}
+	public List<ClockTimeBean> getClockDetails(int uid){
+		logger.info("enter into getClockDetails");
+		List<ClockTimeBean> clockTimeDetails = timeSheetsDAOImpl.getClockTimeDetails(uid);
+		logger.info(clockTimeDetails);
+		logger.info("exit from clockTimeDetails");
+		return clockTimeDetails;
+	}
+	public ClockTimeBean saveClockOutDetails(ClockTimeBean clockOutDetails)throws DBUpdateException{
+		logger.info("enter into saveClockOutDetails");
+		clockOutDetails =timeSheetsDAOImpl.saveClockOutDetails(clockOutDetails);
+		logger.info(clockOutDetails);
+
+		logger.info("exit from saveClockOutDetails");
+		return clockOutDetails;
+	}
+	public EmployeeDetails registerUser(User user){
+		logger.info("enter into registerUser");
+		User userPersisted = null;
+		if(user.getUid() == 0){			
+			userPersisted = employeeDAOImpl.createUser(user);
+		}
+		EmployeeDetails empDetails = user.getEmployeeDetails();
+		empDetails.setUid(userPersisted.getUid());
+
+		EmployeeDetails savedUserDetails = null;
+
+		empDetails=employeeDetailsDAOImpl.saveEmployeeDetails(empDetails);
+
+
+		EmployeeMappings mappings = user.getEmployeeMappings();
+		mappings.setUid(userPersisted.getUid());
+		logger.info(mappings);
+		mappings=employeeMappingsDAOImpl.saveEmployeeMappings(user.getEmployeeMappings());
+		logger.info("exit from registerUser");
+
+		return empDetails;
+
+	}
+	public List<EmployeeDetails> getEmployees(){
+		logger.info("enter into getEmployees");
+		List<EmployeeDetails> EmployeeDetails=employeeDAOImpl.getEmployees();
+		logger.info(EmployeeDetails);
+		logger.info("exit from getEmployees");
+		return EmployeeDetails;
+
+	}
+	public EmployeeDetails getEmployeeDetails(int uid)
+	{
+		logger.info("enter into getEmployeeDetails");
+
+		EmployeeDetails empdetails = employeeDetailsDAOImpl.getEmployeeDetails(uid);
+		logger.info(empdetails);
+		logger.info("exit from getEmployeeDetails");
+		return empdetails;
+	}
+	@Override
+	public EmployeeDetails upateEmployeeDetails(EmployeeDetails employeeDetails) throws DBUpdateException {
+		logger.info("enter into upateEmployeeDetails");
+		logger.info("exit from upateEmployeeDetails");
+
+		return employeeDetailsDAOImpl.updateEmployeeDetails(employeeDetails);
+	}
+	@Override
+	public List<EmployeeTask> getEmployeetask(int uid) {
+		logger.info("enter into getEmployeetask");
+		List<EmployeeTask> emptask =employeeTaskDAOImpl.getEmployeetask(uid);
+		logger.info(emptask);
+		logger.info("exit from getEmployeetask");
+		return emptask;
+	}
+	@Override
+	public List<Employee> getEmployeesUnderUser(int uid){
+		logger.info("enter into getEmployeesUnderUser");
+		logger.info("exit from getEmployeesUnderUser");
+
+		return employeeDAOImpl.getEmployeesunderuser(uid);
+	}
+	@Override
+	public List<EmployeeDetails> presentEmployeeDetails()
+	{
+		logger.info("enter into presentEmployeeDetails");
+
+		List<EmployeeDetails> presentempdetails=employeeDetailsDAOImpl.presentEmployeeDetails();
+		logger.info(presentempdetails);
+		logger.info("exit from presentEmployeeDetails");
+		return presentempdetails;
+	}
+	@Override
+	public List<EmployeeDetails> getAllEmployees()
+	{
+		logger.info("enter into getAllEmployees");
+
+
+		List<EmployeeDetails> allempdetails = employeeDetailsDAOImpl.getAllEmployees();
+		logger.info(allempdetails);
+		logger.info("exit from getAllEmployees");
+		return allempdetails; 
+
+
+	}
+
+	@Override
+	public EmployeeTask saveEmployeeTask(EmployeeTask employeeTaskDetails) {
+		logger.info("Enter into saveEmployeeTask");
+		employeeTaskDetails =employeeTaskDAOImpl.saveEmployeeTask(employeeTaskDetails);
+		logger.info("saveEmployeeTask");
+		logger.info("Exit from  saveEmployeeTask");
+		logger.info(employeeTaskDetails);
+		int tid=employeeTaskDetails.getTid();
+		TaskDetails td=new TaskDetails();
+		td.setTid(tid);
+		td.setUid(employeeTaskDetails.getUid());
+		td.setStatus("NC");
+		td=employeeTaskDAOImpl.saveTask(td);
+
+		return employeeTaskDetails;
+	}
+	@Override
+	public List<TaskDetails> getTaskDetails(int uid) {
+		logger.info("Enter into getTaskDetails");
+
+		List<TaskDetails> taskdetail = employeeTaskDAOImpl.getTaskDetails(uid);
+		logger.info("taskdetail");
+		logger.info("Exit from  getTaskDetails");
+		return taskdetail;
+
+	}
+	@Override
+	public TaskDetails updateTaskDetails(TaskDetails bean)throws DBUpdateException
+	{
+		logger.info("enter into updateTaskDetails");
+
+		return employeeTaskDAOImpl.updateTaskDetails(bean);
+
+	}
+	@Override
+	public float updatePercentage(int tid,float percentage,String status,String reason) throws DBUpdateException{
+		return employeeTaskDAOImpl.updatePercentage(tid,percentage,status,reason);
+	}
+	@Override
+	public EmployeeDetails getEmplDetails(int uid) {
+		logger.info("enter into getEmpDetails");
+		EmployeeDetails empdet = employeeDetailsDAOImpl.getEmplDetails(uid);
+		logger.info(empdet);
+		logger.info("exit from getEmpDetails");
+		return empdet;
+	}
+	@Override
+	public List<TaskDetails> getEmpMilestones() {
+		logger.info("enter into getEmpMilestones");
+
+		List<TaskDetails> projdetails=employeeTaskDAOImpl.getEmpMilestones();
+		logger.info(projdetails);
+		logger.info("exit from getEmpMilestones");
+		return projdetails;
+	}	
+	@Override
+	public String resetPassword(User user) throws DBUpdateException{
+		logger.info("Enter into resetPassword");
+		loginDAOImpl.resetPassword(user);
+		String passWord= user.getPassword();
+		logger.info("Exit from resetPassword");
+		return passWord;
+	}
+	@Override
+	public GrievanceDetails registerGrievance(GrievanceDetails grievancedt)
+	{
+		logger.info("enter into registerGrievance");
+		grievancedt =grievancedetailsDAOImpl.saveGrievanceDetails(grievancedt);
+		logger.info(grievancedt);
+		logger.info("exit into registerGrievance");
+		return grievancedt;
+
+	}
+	@Override
+	public List<GrievanceDetails> getAllGrievances()
+	{ 
+		logger.info("enter into getallgrievances");
+		List<GrievanceDetails> grievanceDetails=grievancedetailsDAOImpl.getAllGrievances();
+		logger.info(grievanceDetails);
+		logger.info("exit from getallgrievances");
+		return grievanceDetails;
+
+
+	}
+
+	@Override
+	public List<TaskDetails> getEmployeeTasksPerformance(String empid,int npid)
+	{
+		logger.info("enter into getEmployeeTasksPerformance");
+		List<TaskDetails> tasksdetails = employeeTaskDAOImpl.getEmployeeTasksPerformance(empid,npid);
+		logger.info(tasksdetails);
+		logger.info("exit from getEmployeeTasksPerformance");
+
+		return tasksdetails;
+
+
+	}
+	@Override
+	public List<EmployeeDetails> getEmployeesDepartmentDetails(){
+		logger.info("enter into getEmployeesDepartmentDetails");
+		List<EmployeeDetails> details = employeeDAOImpl.getEmployeesDepartmentDetails();
+		logger.info(details);
+		logger.info("exit from getEmployeesDepartmentDetails");
+		return details;
+	}
+	@Override
+	public CompanyAssetsBean registerAsset(CompanyAssetsBean bean){
+		logger.info("enter into registerAsset");
+		logger.info(bean);
+		logger.info("exit fromregisterAsset");
+		return assetsDAOImpl.createAsset(bean);
+	}
+	@Override
+	public CompanyLicensesBean registerLicense(CompanyLicensesBean bean) {
+		logger.info("enter into registerLicense");
+		logger.info(bean);
+		logger.info("exit from registerLicense");
+		return assetsDAOImpl.createLicense(bean);
+	}
+	@Override
+	public CompanyConsumableBean registerConsumable(CompanyConsumableBean bean) {
+		logger.info("enter into registerConsumable");
+		logger.info(bean);
+		logger.info("exit into registerConsumable");
+		return assetsDAOImpl.createConsumable(bean);
+	}
+	@Override
+	public CompanyAccessoryBean registerAccessory(CompanyAccessoryBean bean)
+	{
+		logger.info("enter into registerAccessory");
+		logger.info(bean);
+		logger.info("exit from registerAccessory");
+		return assetsDAOImpl.createAccessory(bean);
+	}
+	@Override
+	public CompanyComponentBean registerComponent(CompanyComponentBean bean)
+	{
+		logger.info("enter into registerComponent");
+		logger.info(bean);
+		logger.info("exit from registerComponent");
+		return assetsDAOImpl.createComponent(bean);
+
+	}
+	@Override
+
+	public List<EmployeeDetails> getEmployeesReportingDetails()
+	{
+		logger.info("enter into getEmployeesReportingDetails");
+		List<EmployeeDetails> details = employeeDAOImpl.getEmployeesReportingDetals();
+		logger.info("exit into getEmployeesReportingDetails");
+		return details;
+	}
+	@Override
+	public List<CompanyLicensesBean>  getCompanyLicensesDetails()
+	{
+		logger.info("enter into getCompanyLicensesDetails");
+		List<CompanyLicensesBean> details =assetsDAOImpl.getCompanyLicensesDetails();
+		logger.info("exit from getCompanyLicensesDetails");
+		return details;
+	}
+	@Override
+	public List<CompanyConsumableBean> getCompanyConsumableDetails()
+	{
+		logger.info("enter into getCompanyConsumableDetails");
+		List<CompanyConsumableBean> details =assetsDAOImpl.getCompanyConsumableDetails();
+		logger.info("exit from getCompanyConsumableDetails");
+		return details;
+
+	}
+	@Override
+	public List<CompanyAssetsBean> getCompanyAsset() {
+		logger.info("enter into getCompanyAsset");
+		List<CompanyAssetsBean> assets=assetsDAOImpl.getCompanyAsset();
+		logger.info(assets);
+		logger.info("exit from getCompanyAsset");
+		return assets;
+	}
+	@Override
+	public List<CompanyAccessoryBean> getCompanyAccessory() {
+		logger.info("enter into getCompanyAccessory");
+		List<CompanyAccessoryBean> accessory=assetsDAOImpl.getCompanyAccessory();
+		logger.info(accessory);
+		logger.info("exit from getCompanyAccessory");
+		return accessory;
+	}
+	@Override
+	public List<CompanyComponentBean> getCompanyComponent() {
+		logger.info("enter into getCompanyComponent");
+		List<CompanyComponentBean> component=assetsDAOImpl.getCompanyComponent();
+		logger.info(component);
+		logger.info("exit from getCompanyComponent");
+		return component;
+	}
+	@Override
+	public AssetTicketBean registerTicket(AssetTicketBean bean)
+	{   logger.info("enter into registerTicket");
+	logger.info(bean);
+	logger.info("exit from registerTicket");
+	return assetsDAOImpl.createAssetTicket(bean);
+
+	}
+	@Override
+	public List<AssetTicketBean> getAssetTicket() {
+		logger.info("enter into getAssetTicket");
+		List<AssetTicketBean> ticket=assetsDAOImpl.getAssetTicket();
+		logger.info(ticket);
+		logger.info("exit from getAssetTicket");
+		return ticket;
+	}
+	@Override
+	public AssetTicketBean updateAssetStatus(AssetTicketBean bean) throws DBUpdateException {
+		logger.info("enter into updateAssetStatus");
+		logger.info("exit from updateAssetStatus");
+		return assetsDAOImpl.updateAssetStatus(bean);
+
+
+	}
+	@Override
+	public AssetTicketBean  updateBstatusOfAssetTicket(AssetTicketBean bean)throws DBUpdateException{
+		logger.info("enter into updateBstatusOfAssetTicket");
+		return assetsDAOImpl.updateBstatusOfAssetTicket(bean);
+	}
+	@Override
+	public AssetTicketBean  updateRstatusOfAssetTicket(AssetTicketBean bean)throws DBUpdateException{
+		logger.info("enter into updateRstatusOfAssetTicket");
+		return assetsDAOImpl.updateRstatusOfAssetTicket(bean);
+	}
+
+	@Override
+	public List<String> getAllEmployeesMails()
+	{
+		logger.info("enter into getAllEmployeesMails");
+
+		return grievancedetailsDAOImpl.getAllEmployeeEmails();
+	}
+	@Override
+	public GrievanceDetails updateGrievanceTicketStatus(GrievanceDetails bean)throws DBUpdateException
+	{
+		logger.info("enter into updateGrievanceTicketStatus");
+		logger.info("exit from  updateGrievanceTicketStatus");
+		return grievancedetailsDAOImpl.updateGrievanceTicketStatus(bean); 
+
+	}
+
+	@Override
+	public EmployeeDetails updateEmployeeReportToDetails(EmployeeDetails bean)throws DBUpdateException
+	{
+		logger.info("enter into  updateEmployeeReportToDetails");
+
+		return employeeDetailsDAOImpl.updateEmployeeReporttoDetails(bean);
+	}
+	@Override
+	public NewProjectBean saveNewProject(NewProjectBean newProjectDetails) {
+		logger.info("Enter into saveNewProject");
+		newProjectDetails =employeeTaskDAOImpl.saveNewProject(newProjectDetails);
+		logger.info(newProjectDetails);
+		logger.info("Exit from  saveNewProject");
+
+		return newProjectDetails;
+	}
+
+
+	@Override
+	public List<NewProjectBean> getEmployeerojectDetails()
+	{
+
+		logger.info("enter into getemployeeprojectdetails");
+		logger.info("exit from getemployeeprojectdetails");
+		return employeeTaskDAOImpl.getEmployeeProjectDetails(); 	
+	}
+
+	@Override
+	public List<TaskDetails> getEmployeesUnderProject(int npid)
+	{
+		logger.info("enter into getEmployeesUnderProject");
+		logger.info("exit from getEmployeesUnderProject");
+
+		return employeeTaskDAOImpl.getEmployeesOfProject(npid);
+
+	}
+	@Override
+	public List<TaskDetails> getProjectTypeDetails()
+	{
+		return employeeTaskDAOImpl.getProjectTypeDetails();
+
+
+	}
+
+
+	@Override
+	public NewBranchBean saveBranchDetails(NewBranchBean branch) {
+		logger.info("enter into saveBranchDetails");
+		branch=assetsDAOImpl.saveBranchDetails(branch);
+		logger.info(branch);
+		logger.info("exit from saveBranchDetails");
+		return branch;
+	}
+	@Override
+	public List<String> getBranchNameDetails() {
+		logger.info("enter into getBranchNameDetails");
+
+		return assetsDAOImpl.getBranchNameDetails();
+	}
+	@Override
+	public CandidateInfoBean saveCandidatedetails(CandidateInfoBean details) {
+		logger.info("enter into saveCandidatedetails");
+		details=candidateinfoDAOImpl.saveCandidatedetails(details);
+		logger.info(details);
+		logger.info("exit from saveCandidatedetails");
+		return details;
+	}
+	@Override
+	public List<EmployeeDetails> getAssignedtodetails() {
+		logger.info("enter into getAssignedtodetails");
+		List<EmployeeDetails> details = candidateinfoDAOImpl.getAssignedtodetails();
+		logger.info("exit into getAssignedtodetails");
+		return details;
+	}
+	@Override
+	public ContactBean saveContactdetails(ContactBean contactdetails) {
+		logger.info("enter into saveContactdetails");
+		contactdetails=contactDAOImpl.saveContactdetails(contactdetails);
+		logger.info(contactdetails);
+		logger.info("exit from saveContactdetails");
+		return contactdetails;
+	}
+	@Override
+	public OpeningInfoBean saveOpeningdetails(OpeningInfoBean openings) {
+		logger.info("enter into saveOpeningdetails");
+		openings=openingInfoDAOImpl.saveOpeningdetails(openings);
+		logger.info(openings);
+		logger.info("exit from saveOpeningdetails");
+		return openings;
+	}
+	@Override
+	public List<ContactBean> getAccountDetails()
+	{
+		logger.info("enter into getaccount details");
+		logger.info("exit from getaccoundetails");
+		 return contactDAOImpl.getAccountDetails();
+	}
+	@Override
+	public ContactBean getAccountOwnerdetails(String accountowner) {
+		logger.info("enter into getAccountOwnerdetails");
+		logger.info("exit  from getAccountOwnerdetails");
+		return contactDAOImpl.getAccountOwnerdetails(accountowner);
+	}
+	@Override
+	public List<ContactBean> getHotlistdetails() {
+		logger.info("enter into getHotlistdetails");
+		logger.info("exit  from getHotlistdetails");
+		return contactDAOImpl.getHotlistdetails();
+	}
+	@Override
+	public List<CandidateInfoBean> getCandidateDetails()
+	{
+		logger.info("enter into getCandidateDetails");
+		logger.info("exit  from getCandidateDetails");
+		return candidateinfoDAOImpl.getCandidateDetails();
+		
+		
+		
+		
+	}
+	@Override
+	public List<ContactBean> getReqlistdetails() {
+		logger.info("enter into getReqlistdetails");
+		logger.info("exit  from getReqlistdetails");
+		return contactDAOImpl.getReqlistdetails();
+	}
+	@Override
+	public OpeningInfoBean getOpeningdetails(int rqid) {
+		logger.info("enter into getOpeningdetails");
+		logger.info("exit  from getOpeningdetails");
+		return openingInfoDAOImpl.getOpeningdetails(rqid);
+	}
+	@Override
+	public List<OpeningInfoBean> getAllOpeningdetails() {
+		logger.info("enter into getAllOpeningdetails");
+		logger.info("exit  from getAllOpeningdetails");
+		return openingInfoDAOImpl.getAllOpeningdetails();
+	}
+	@Override
+	public CandidateInfoBean updateCandidateDetails(CandidateInfoBean candidatedetails) throws DBUpdateException {
+		logger.info("enter into updateCandidateDetails");
+		logger.info("exit from updateCandidateDetails");
+		return candidateinfoDAOImpl.updateCandidateDetails(candidatedetails);
+	}
+	@Override
+	public OpeningInfoBean updatedOpeningDetails(OpeningInfoBean openingdetails) throws DBUpdateException {
+		logger.info("enter into updatedOpeningDetails");
+		logger.info("exit from updatedOpeningDetails");
+		return openingInfoDAOImpl.updatedOpeningDetails(openingdetails);
+	}
+	
+	
+	
+	
+	}
+	
+
+
+
+

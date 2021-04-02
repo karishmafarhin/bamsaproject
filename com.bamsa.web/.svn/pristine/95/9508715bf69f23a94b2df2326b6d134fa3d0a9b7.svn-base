@@ -1,0 +1,312 @@
+<%@page import="com.bamsa.web.util.ApplicationConstants"%>
+<%@page import="com.bamsa.web.model.UserBean"%>
+<%@page import="com.bamsa.web.model.ClockTimeModel"%>
+<%@page import="com.bamsa.web.model.EmployeeDetailsModel"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.Date"%>
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<!DOCTYPE html>
+<% 
+UserBean userData = (UserBean) request.getSession().getAttribute(ApplicationConstants.LOGIN_BEAN);
+
+
+if(userData == null)
+{
+	response.sendRedirect("/bamsa");	
+}
+%>
+   <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+<script type="text/javascript" src='<c:url value="/static/js/jquery-1.11.1.min.js"/>'></script>
+<script type="text/javascript" src='<c:url value="/static/js/jquery-ui.min.js"/>'></script>
+<link rel="stylesheet" href='<c:url value="/static/css/jquery-ui.css" />'/>
+    <title> My TimeSheet</title>
+
+
+<%
+List<ClockTimeModel> clockTimeDetails = (List)request.getAttribute("userclockDetails");
+List<EmployeeDetailsModel> presentees =(List)request.getAttribute("EmployeeDetails");
+List<EmployeeDetailsModel> absentees =(List)request.getAttribute("abscentempnames");
+int presentcount=0;
+int absentcount=0;
+if(null!=request.getAttribute("noofpresentees")){
+	presentcount = (Integer)request.getAttribute("noofpresentees");
+	
+	}
+else{
+	presentcount=0;
+}
+if(null!=request.getAttribute("noofabsentees")){
+	absentcount = (Integer)request.getAttribute("noofabsentees");
+	
+	}
+else{
+	absentcount=0;
+}
+ 
+boolean empIdShow=false;
+if(null!=userData && userData.getUid()==0){
+	empIdShow=true;
+}
+
+
+%>
+
+
+<script>
+$( document ).ready(function() {
+	$("#clockdetails").addClass("act");
+	
+});
+$(document).ready(function(){
+    $('#myTable').DataTable();
+});
+
+/* Init the table and fire off a call to get the hidden nodes. */
+</script>
+
+<body class="nav-md">
+    <div class="container body">
+      <div class="main_container">
+             <jsp:include page="header.jsp" />
+             
+
+ 
+ <div class="right_col" role="main">
+          <h3 style="text-align: center; color: green"></h3><div class="">
+            
+  
+  
+             
+
+			
+            </div>
+            
+            
+            
+            <div class="right_col" role="main">
+          <div class="row">
+  
+	</div>
+	</div>
+	<div>
+	<h1></h1>
+	</div>
+            <div class="row">
+<div class="col col-xs-6">
+	<i class="fa fa-hand-o-right fa-2x ab" style="color:#d9534f;" aria-hidden="true"></i>
+	 <button type="button" name="absent" id="absent" class="btn btn-danger" data-toggle="modal" data-target="#myModala">Absentees <span class="badge"><%=absentcount %></span></button>
+	 <i class="fa fa-hand-o-right fa-2x pr" style="color:green;" aria-hidden="true"></i>
+	  <button type="button" name="present" id="present" class="btn btn-success" data-toggle="modal" data-target="#myModalp">Presentees <span class="badge"><%=presentcount %></span></button>
+	</div>
+	</div>
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+               
+                
+                  
+	
+
+	<div>
+	<h1></h1>
+	</div>
+	<div class="container-fluid">
+		<div class="row" style="margin-right:0px">
+						<div class="panel panel-primary panel-table">
+              <div class="panel-heading">
+                <div class="row">
+                  
+                    <h2 class="panel-title text-center" style="font-size: 21px!important"><b>Time Sheet</b></h2>
+                  
+                  
+                </div>
+              </div>
+              <%if(empIdShow){%>
+              <div> <p>
+                    <form action="clockDetails" method="post">
+                    <center><input style="padding-bottom: 6px;" type="text" class="long" name="empid" maxlength="20" id="name" placeholder="Enter Employee Id" required/>
+              
+                <button style="padding: 3px 5px;" class="btn btn-primary btn-xs btn3d" type="submit"><b>submit</b></button></center>
+</form></p></div><% }%>
+								<div class="table-responsive">
+									<table id="myTable" class="table table-striped table-bordered ">
+										<thead>
+											<tr class="st1 ">
+												<th class="info" >S.No</th>
+												<th class="info" >Employee Id</th>
+												<th class="info" >In Date-Time</th>
+												<th class="info" >In-IpAddress</th>
+												<th class="info" >Out Date-Time</th>
+												<th class="info" >Out-IpAddress</th>
+												<th class="info" >No.Of Hours</th>
+											</tr>
+										</thead>
+										<tbody>	
+
+						<%
+						int i=1;
+						if(null!=clockTimeDetails){
+						for(ClockTimeModel clock :clockTimeDetails){ %>
+							<tr class="st1">
+								<td><%=i%></td>
+								<td><%=clock.getEmpid()%></td>
+								<td><%=clock.getClockInDay()%></td>
+								<td><%=clock.getClockInipAddress()%></td>
+								<%if(null!=clock.getClockOutDay() && null!=clock.getClockOutipAddress())
+								{
+								%>
+								<td><%=clock.getClockOutDay()%></td>
+								<td><%=clock.getClockOutipAddress()%></td>
+								
+								<%
+								 long diff = clock.getClockOutDay().getTime() - clock.getClockInDay().getTime();
+								long diffSeconds = diff / 1000 % 60;
+								long diffMinutes = diff / (60 * 1000) % 60;
+								long diffHours = diff / (60 * 60 * 1000) % 24;
+								long diffDays = diff / (24 * 60 * 60 * 1000);
+								if(diffDays>0){
+							     								
+								%>
+								<td><%=diffDays %>D <%=diffHours %>H <%=diffMinutes %>m <%=diffSeconds %>s</td>
+								<%}else{ %>
+								
+								<td><%=diffHours %>H <%=diffMinutes %>m <%=diffSeconds %>s</td>
+								<%} %>
+								<%}else {%>
+								
+								<td>Missing</td>
+								<td>Missing</td>
+								<td>---</td>
+								<% }%>
+								<%i++; %>
+							</tr>
+							<%}} %>
+							
+							
+							
+						</tbody>
+					</table>
+				</div>
+				</div>
+				
+			</div>
+		</div>
+		</div>
+		</div>
+		</div>
+		</div>
+		</div>
+		
+		</div>
+		<script>
+
+$(document).ready(function(){
+    $('#myTables').DataTable();
+});
+
+/* Init the table and fire off a call to get the hidden nodes. */
+</script>
+	<!-- Modal -->
+<div id="myModala" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title text-center" style="color:#004d99 !important;"><b>Absentees</b></h4>
+      </div>
+      <div class="modal-body">
+     <div class="table-responsive">
+				<table id="myTables" class="table table-striped table-bordered ">
+					<thead>
+					<tr class="st1" >
+					<th class="info" style="text-align:center" >S.No</th>
+					<th class="info" style="text-align:center">Name</th>
+					<th class="info" style="text-align:center">EmployeeID</th>
+												
+					</tr>
+					</thead>
+        <%int j=1;
+        if(null!=absentees){
+        for(EmployeeDetailsModel absentee :absentees){ 
+        
+        %>
+        <tr class="st1">
+        <td><%=j%></td>
+        <td><%=absentee.getName() %></td>
+       
+        <td><%=absentee.getEmpId() %></td>
+        </tr>
+        <%j++;}} %>
+        
+       </table>  
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+<script>
+
+$(document).ready(function(){
+    $('#myTab').DataTable();
+});
+
+/* Init the table and fire off a call to get the hidden nodes. */
+</script>
+<!-- Modal -->
+<div id="myModalp" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title text-center" style="color:#004d99 !important;"><b>Presentees</b></h4>
+      </div>
+      <div  class="table-responsive">
+				<table id="myTab" class="table table-striped table-bordered ">
+					<thead>
+					<tr class="st1 info">
+					<th style="text-align:center">S.No</th>
+					<th style="text-align:center">Name</th>
+					<th style="text-align:center">EmployeeID</th>							
+					</tr>
+					</thead>
+        <%int k=1;
+        if(null!=presentees){
+        for(EmployeeDetailsModel presentee :presentees){ 
+        
+        %>
+        <tr class="st1">
+        <td><%=k%></td>
+        <td><%=presentee.getName() %></td>
+        <td><%=presentee.getEmpId() %></td> 
+        </tr>
+        <%k++;}} %>
+        
+       </table>  
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>					
+
+<script type="text/javascript" src='<c:url value="/static/js/jquery.dataTables.min.js"/>'></script> 
+<link rel="stylesheet" href='<c:url value="/static/css/jquery.dataTables.min.css"/>' />
+</body>
+</html>

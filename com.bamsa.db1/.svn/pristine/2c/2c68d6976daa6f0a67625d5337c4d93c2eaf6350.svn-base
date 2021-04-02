@@ -1,0 +1,107 @@
+package com.bamsa.db.dao.impl;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.stereotype.Repository;
+
+import com.bamsa.db.beans.EmployeeDetails;
+import com.bamsa.db.beans.OpeningInfoBean;
+import com.bamsa.db.dao.OpeningInfoDAO;
+import com.bamsa.db.exceptions.DBUpdateException;
+import com.bamsa.db.impls.mappers.AllOpeningRowMapper;
+import com.bamsa.db.impls.mappers.EmpDetaiRowMapper;
+import com.bamsa.db.impls.mappers.OpeningDetailsRowMapper;
+import com.bamsa.db.impls.stmtsetters.CandidateDetailsStmtSetter;
+import com.bamsa.db.impls.stmtsetters.OpeningDetailsStmtSetter;
+import com.bamsa.db.util.DBConstants;
+import com.bamsa.db.util.ErrorConstants;
+@Repository
+public class OpeningInfoDAOImpl implements OpeningInfoDAO {
+	@Autowired
+	private Properties dbProps;
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+	private static Logger logger = Logger.getLogger(OpeningInfoDAOImpl.class);
+	@Override
+	public OpeningInfoBean saveOpeningdetails(OpeningInfoBean openings) {
+		logger.info("enter into saveOpeningdetails");
+		DataSource dataSource = jdbcTemplate.getDataSource();
+		try{
+		if(null != openings){
+			SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(dataSource);
+			
+			Map<String,Object> recordParameters = new HashMap<String,Object>();
+			recordParameters.put("positionid", openings.getPositionid());
+			recordParameters.put("positiontitle", openings.getPositiontitle());
+			recordParameters.put("state", openings.getState());
+			recordParameters.put("city", openings.getCity());
+			recordParameters.put("primaryskill", openings.getPrimaryskill());
+			recordParameters.put("secondaryskill", openings.getSecondaryskill());
+			recordParameters.put("description", openings.getDescription());
+			recordParameters.put("rate", openings.getRate());
+			recordParameters.put("primevendor", openings.getPrimevendor());
+			recordParameters.put("endclient", openings.getEndclient());
+			recordParameters.put("createdby", openings.getCreatedby());
+			recordParameters.put("createddate", openings.getCreateddate());
+			recordParameters.put("billtype", openings.getBilltype());
+			logger.info(recordParameters);
+            jdbcInsert.withTableName("openinginfo")
+			.usingGeneratedKeyColumns("rqid");	
+			openings.setRqid(jdbcInsert.executeAndReturnKey(recordParameters).intValue());
+		}
+		}catch(Exception e){
+			logger.error(e.getMessage());
+		}
+		logger.info("exit from saveContactdetails");
+		return openings;		
+	}
+	@Override
+	public OpeningInfoBean getOpeningdetails(int rqid) {
+		logger.info("enter into getOpeningdetails");
+	
+		String openingquery =dbProps.getProperty(DBConstants.LOAD_OPENING_DETAILS);
+		List<OpeningInfoBean> emp1= jdbcTemplate.query(openingquery,new Object[]{rqid}, new OpeningDetailsRowMapper());
+		logger.info(emp1);
+		logger.info("exit from getEmployeeDetails");
+		return emp1.get(0);
+	}
+	@Override
+	public List<OpeningInfoBean> getAllOpeningdetails() {
+	logger.info("enter into getAllOpeningdetails");
+	String allopening =dbProps.getProperty(DBConstants.LOAD_ALLOPENING_DETAILS);
+	List<OpeningInfoBean> open=jdbcTemplate.query(allopening, new AllOpeningRowMapper());
+	logger.info(open);
+logger.info("exit from getAllOpeningdetails");
+	return open;
+	}
+	@Override
+	public OpeningInfoBean updatedOpeningDetails(OpeningInfoBean openingdetails) throws DBUpdateException {
+		logger.info("enter into buildUpdatedOpeningDetails");
+		try{
+			
+	        String updateQuery = dbProps.getProperty(DBConstants.UPDATE_OPENING_DETAILS);
+	        int numberRecordsUpdated = jdbcTemplate.update(updateQuery,new OpeningDetailsStmtSetter(openingdetails));
+	        if(numberRecordsUpdated == 0){
+	            DBUpdateException dbException = new DBUpdateException("Zero Records updated");
+	            dbException.setErrorCode(ErrorConstants.OPENING_DETAILS_UPDATE_FAILED);
+	            throw dbException;
+	        }
+			}catch(Exception e){
+				logger.error(e.getMessage());
+			}
+	        logger.info("exit from updateCandidateDetails");
+	        return openingdetails;
+	    
+		}
+
+
+}

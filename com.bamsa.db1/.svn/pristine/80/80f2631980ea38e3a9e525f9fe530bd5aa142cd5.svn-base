@@ -1,0 +1,451 @@
+--sushmitha (14-3-2017)
+--created table for saving EMPLOYEE TASK details
+
+CREATE TABLE `bamsa`.`employeetasks` (
+  `tid` INT(11) NOT NULL,
+  `uid` INT(11) NOT NULL,
+  `empid` VARCHAR(45) NOT NULL,
+  `taskdescription` VARCHAR(255) NOT NULL,
+  `givenby` INT(11) NOT NULL,
+  `deadline` DATE NOT NULL,
+  `givendate` DATE NOT NULL,
+  PRIMARY KEY (`tid`));
+
+  CREATE TABLE `bamsa`.`taskdetails` (
+  `tdid` INT(11) NOT NULL AUTO_INCREMENT,
+  `tid` INT(11) NOT NULL,
+  `uid` INT(11) NOT NULL,
+  `status` VARCHAR(45) NOT NULL,
+  `percentagecompleted` FLOAT NOT NULL,
+  `queries` VARCHAR(255) NULL,
+  `backlogs` VARCHAR(255) NULL,
+  PRIMARY KEY (`tdid`));
+
+  DELIMITER $$
+
+USE `bamsa`$$
+
+DROP PROCEDURE IF EXISTS `employeedetailsProcedure`$$
+
+CREATE PROCEDURE employeedetailsProcedure()
+BEGIN
+DECLARE done INT DEFAULT 0;
+
+SELECT  hierarchyid,umid,NAME,empid FROM (SELECT um.uid AS umid,hierarchyid,name,empid FROM employeemappings um,employeedetails ud WHERE ud.uid = um.uid) ps,(SELECT @pv := '1') initialisation WHERE   FIND_IN_SET(hierarchyid, @pv) >= 0 AND @pv := CONCAT(@pv, ',',umid)ORDER BY hierarchyid,umid   ;
+
+
+END$$
+
+DELIMITER ;
+
+--Nikhila (01-4-2017)
+--employeedetails table modification
+
+ALTER TABLE bamsa.employeedetails MODIFY dob date NOT NULL;
+
+---changed tid column as a auto increment
+ALTER TABLE `bamsa`.`employeetasks` 
+CHANGE COLUMN `tid` `tid` INT(11) NOT NULL AUTO_INCREMENT ;
+
+----added tasktype column
+ALTER TABLE bamsa.employeetasks ADD COLUMN tasktype char(4) NOT NULL; 
+
+----added projectname coulumn
+ALTER TABLE bamsa.employeetasks ADD COLUMN project_name varchar(255) NOT NULL; 
+
+---altered column name
+ALTER TABLE `bamsa`.`employeetasks` 
+CHANGE COLUMN `project_name` `projectname` VARCHAR(255) NULL DEFAULT NULL ;
+
+END$$
+
+DELIMITER ;
+--Rajamohan(07-04-2017)
+--grievancedetails table
+CREATE TABLE `bamsa`.`grievancedetails` (
+  `gid` INT(11) NOT NULL,
+  `uid` INT(11) NOT NULL,
+  `grievancetype` VARCHAR(45) NOT NULL,
+  `grievancesevere` VARCHAR(255) NOT NULL,
+  `mobileNo` VARCHAR(45) NOT NULL,
+  `grievancedetails` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`gid`));
+
+  ALTER TABLE `bamsa`.`grievancedetails` 
+CHANGE COLUMN `gid` `gid` INT(11) NOT NULL AUTO_INCREMENT ;
+
+  --Nikhila (11-4-2017)
+  ---altered stored procedure----
+  USE `bamsa`;
+DROP procedure IF EXISTS `employeedetailsProcedure`;
+
+DELIMITER $$
+USE `bamsa`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `employeedetailsProcedure`()
+BEGIN
+DECLARE done INT DEFAULT 0;
+
+SELECT  hierarchyid,umid,NAME,empid,streamid,desigid FROM (SELECT um.uid AS umid,hierarchyid,name,empid,streamid,desigid FROM employeemappings um,employeedetails ud WHERE ud.uid = um.uid) ps,(SELECT @pv := '1') initialisation WHERE   FIND_IN_SET(hierarchyid, @pv) >= 0 AND @pv := CONCAT(@pv, ',',umid)ORDER BY hierarchyid,umid   ;
+
+
+END$$
+
+DELIMITER ;
+--Rajamohan(01-4-2017)
+--taskdetails table modification added a new row reason
+ALTER TABLE bamsa.taskdetails ADD COLUMN reason varchar(255) NOT NULL; 
+
+
+--Sushmitha(25-4-2017)
+--created table companyassets for storing asset details
+
+CREATE TABLE `bamsa`.`companyassets` (
+  `caid` INT(11) NOT NULL,
+  `assettag` VARCHAR(45) NOT NULL,
+  `assetstatus` VARCHAR(45) NOT NULL,
+  `assetserial` VARCHAR(45) NOT NULL,
+  `assetname` VARCHAR(45) NOT NULL,
+  `purchasedate` DATE NOT NULL,
+  `supplier` VARCHAR(45) NOT NULL,
+  `orderno` VARCHAR(45) NOT NULL,
+  `purcchasecost` FLOAT NOT NULL,
+  `warranty` INT(11) NOT NULL,
+  `notes` VARCHAR(225) NULL,
+  `assetimage` BLOB NULL,
+  PRIMARY KEY (`caid`));
+
+ALTER TABLE `bamsa`.`companyassets` 
+CHANGE COLUMN `caid` `caid` INT(11) NOT NULL AUTO_INCREMENT ;
+
+ALTER TABLE `bamsa`.`companyassets` 
+ADD COLUMN `model` VARCHAR(45) NOT NULL AFTER `assetimage`;
+
+
+
+--Sushmitha(25-4-2017)
+--created table companylicenses for storing license details
+
+CREATE TABLE `bamsa`.`companylicenses` (
+  `clid` INT(11) NOT NULL AUTO_INCREMENT,
+  `softwarename` VARCHAR(225) NOT NULL,
+  `seats` INT(11) NOT NULL,
+  `company` VARCHAR(225) NOT NULL,
+  `manufacturer` VARCHAR(225) NULL,
+  `licensedto` VARCHAR(45) NOT NULL,
+  `licensedmail` VARCHAR(45) NOT NULL,
+  `productkey` VARCHAR(225) NOT NULL,
+  `orderno` VARCHAR(45) NOT NULL,
+  `purchasecost` FLOAT NOT NULL,
+  `purchasedate` DATE NOT NULL,
+  `expirationdate` DATE NOT NULL,
+  `notes` VARCHAR(225) NULL,
+  PRIMARY KEY (`clid`));
+  
+--Sushmitha(25-4-2017)
+--created table companyaccessories for storing accessory details
+
+  CREATE TABLE `bamsa`.`companyaccessories` (
+  `caid` INT(11) NOT NULL AUTO_INCREMENT,
+  `accessoryname` VARCHAR(45) NOT NULL,
+  `accessorycategory` VARCHAR(45) NOT NULL,
+  `manufacturer` VARCHAR(225) NOT NULL,
+  `modelno` VARCHAR(45) NULL,
+  `orderno` VARCHAR(45) NOT NULL,
+  `purchasedate` DATE NOT NULL,
+  `purchasecost` FLOAT NOT NULL,
+  `quantity` INT(11) NOT NULL,
+  PRIMARY KEY (`caid`));
+
+  
+--Sushmitha(25-4-2017)
+--created table companyconsumables for storing consumable details
+
+CREATE TABLE `bamsa`.`companyconsumables` (
+  `ccid` INT(11) NOT NULL AUTO_INCREMENT,
+  `consumablename` VARCHAR(45) NOT NULL,
+  `consumablecategory` VARCHAR(45) NOT NULL,
+  `manufacturer` VARCHAR(45) NOT NULL,
+  `modelno` VARCHAR(45) NULL,
+  `itemno` VARCHAR(45) NOT NULL,
+  `orderno` VARCHAR(45) NOT NULL,
+  `purchasedate` DATE NOT NULL,
+  `purchasecost` FLOAT NOT NULL,
+  `quantity` INT(11) NOT NULL,
+  PRIMARY KEY (`ccid`));
+  
+  
+--Sushmitha(25-4-2017)
+--created table companycomponents for storing component details
+
+CREATE TABLE `bamsa`.`companycomponents` (
+  `ccmid` INT(11) NOT NULL AUTO_INCREMENT,
+  `componentname` VARCHAR(45) NOT NULL,
+  `category` VARCHAR(45) NOT NULL,
+  `serialno` VARCHAR(45) NOT NULL,
+  `orderno` VARCHAR(45) NOT NULL,
+  `purchaseddate` DATE NOT NULL,
+  `purchasecost` FLOAT NOT NULL,
+  PRIMARY KEY (`ccmid`));
+
+  ALTER TABLE `bamsa`.`companyassets` 
+CHANGE COLUMN `purcchasecost` `purchasecost` FLOAT NOT NULL ;
+
+ALTER TABLE `bamsa`.`companyassets` 
+ADD UNIQUE INDEX `assettag_UNIQUE` (`assettag` ASC);
+
+
+
+
+ALTER TABLE `bamsa`.`companylicenses` 
+DROP COLUMN `company`;
+
+ALTER TABLE `bamsa`.`companylicenses` 
+ADD COLUMN `createdby` INT(11) NOT NULL AFTER `licensedmail`;
+
+ALTER TABLE `bamsa`.`companylicenses` 
+ADD COLUMN `createddate` DATE NOT NULL ;
+
+ALTER TABLE `bamsa`.`companyconsumables` 
+ADD COLUMN `createdby` INT(11) NOT NULL AFTER `manufacturer`;
+
+ALTER TABLE `bamsa`.`companyconsumables`  
+ADD COLUMN `createddate` DATE NOT NULL ;
+
+ALTER TABLE `bamsa`.`companyassets` 
+ADD COLUMN `createddate` DATE NOT NULL ;
+
+ALTER TABLE `bamsa`.`companyassets` 
+ADD COLUMN `createdby` INT(11) NOT NULL AFTER `assetname`;
+
+ALTER TABLE `bamsa`.`companyaccessories`  
+ADD COLUMN `createddate` DATE NOT NULL ;
+
+ALTER TABLE `bamsa`.`companyaccessories` 
+ADD COLUMN `createdby` INT(11) NOT NULL AFTER `manufacturer`;
+
+ALTER TABLE `bamsa`.`companyaccessories` 
+ADD COLUMN `accessoriestag` VARCHAR(45) NOT NULL  AFTER `caid`;
+
+ALTER TABLE `bamsa`.`companyaccessories` 
+ADD UNIQUE INDEX `accessoriestag_UNIQUE` (`accessoriestag` ASC);
+
+ALTER TABLE `bamsa`.`companycomponents` 
+ADD COLUMN `componenttag` VARCHAR(45) NOT NULL UNIQUE  AFTER `ccmid`;
+
+ALTER TABLE `bamsa`.`companyconsumables` 
+ADD COLUMN `consumabletag` VARCHAR(45) NOT NULL UNIQUE  AFTER `ccid`;
+
+ALTER TABLE `bamsa`.`companycomponents`  
+ADD COLUMN `createddate` DATE NOT NULL ;
+
+ALTER TABLE `bamsa`.`companycomponents` 
+ADD COLUMN `createdby` INT(11) NOT NULL AFTER `componentname`;
+
+ALTER TABLE `bamsa`.`companylicenses` 
+ADD COLUMN `licensetag` VARCHAR(45) NOT NULL UNIQUE  AFTER `clid`;
+
+
+CREATE TABLE `bamsa`.`assettickets` (
+  `atid` INT(11) NOT NULL AUTO_INCREMENT,
+  `assettype` VARCHAR(45) NOT NULL,
+  `tag` VARCHAR(45) NOT NULL,
+  `requestto` INT(11) NOT NULL,
+  `purpose` VARCHAR(45) NOT NULL,
+  `remarks` VARCHAR(225) NULL,
+  `fromdate` DATE NULL,
+  `todate` DATE NULL,
+  `risedby` INT(11) NOT NULL,
+  `riseddate` DATE NOT NULL,
+  `thstatus` VARCHAR(45) NULL,
+  `approvedby` INT(11) NULL,
+  `approveddate` DATE NULL,
+  `bstatus` VARCHAR(45) NULL,
+  `rstatus` VARCHAR(45) NULL,
+  PRIMARY KEY (`atid`));
+
+  ALTER TABLE `bamsa`.`grievancedetails` 
+ADD COLUMN `status` VARCHAR(45) NOT NULL AFTER `grievancedetails`;
+
+
+ALTER TABLE `bamsa`.`employeedetails` 
+ADD UNIQUE INDEX `empid_UNIQUE` (`empid` ASC);
+
+CREATE TABLE `bamsa`.`projectdetails` (
+  `npid` INT(11) NOT NULL AUTO_INCREMENT,
+  `projectname` VARCHAR(255) NOT NULL,
+  `projectdescription` VARCHAR(400) NOT NULL,
+  `projectdeadline` DATE NOT NULL,
+  PRIMARY KEY (`npid`));
+  
+  ALTER TABLE `bamsa`.`employeetasks` 
+CHANGE COLUMN `tasktype` `tasktype` CHAR(1) NOT NULL ;
+
+ALTER TABLE `bamsa`.`projectdetails`  
+ADD COLUMN `createddate` DATE  NULL ;
+
+ALTER TABLE `bamsa`.`projectdetails` 
+CHANGE COLUMN `createddate` `createddate` DATE NOT NULL ;
+
+
+CREATE TABLE `bamsa`.`createbranch` (
+  `nbid` INT(11) NOT NULL AUTO_INCREMENT,
+  `branchname` VARCHAR(255) NOT NULL,
+  `state` VARCHAR(255) NOT NULL,
+  `createddate` DATE NOT NULL,
+  PRIMARY KEY (`nbid`));
+
+ALTER TABLE `bamsa`.`companyassets` 
+ADD COLUMN `branchname` VARCHAR(255) NOT NULL AFTER `createddate`;
+
+ALTER TABLE `bamsa`.`companylicenses` 
+ADD COLUMN `branchname` VARCHAR(255) NOT NULL AFTER `createddate`;
+
+ALTER TABLE `bamsa`.`companyaccessories` 
+ADD COLUMN `branchname` VARCHAR(255) NOT NULL AFTER `createddate`;
+
+ALTER TABLE `bamsa`.`companyconsumables` 
+ADD COLUMN `branchname` VARCHAR(255) NOT NULL AFTER `createddate`;
+
+ALTER TABLE `bamsa`.`companycomponents` 
+ADD COLUMN `branchname` VARCHAR(255) NOT NULL AFTER `createddate`;
+
+CREATE TABLE `bamsa`.`candidateinformation` (
+  `ciid` INT(11) NOT NULL,
+  `firstname` VARCHAR(255) NULL,
+  `middlename` VARCHAR(255) NULL,
+  `lastname` VARCHAR(255) NULL,
+  `email` VARCHAR(255) NULL,
+  `phone` VARCHAR(255) NULL,
+  `mobile` VARCHAR(255) NULL,
+  `country` VARCHAR(255) NULL,
+  `currentlocation` VARCHAR(255) NULL,
+  `address` VARCHAR(255) NULL,
+  `preferredlocation1` VARCHAR(255) NULL,
+  `preferredlocation2` VARCHAR(255) NULL,
+  `zipcode` VARCHAR(255) NULL,
+  `availablefrom` DATETIME NULL,
+  `noticeperiod` VARCHAR(45) NULL,
+  `sourcedby` VARCHAR(255) NULL,
+  `sourcedfrom` VARCHAR(45) NULL,
+  `licenseno` VARCHAR(45) NULL,
+  `passportno` VARCHAR(45) NULL,
+  `visastatus` VARCHAR(45) NULL,
+  `dateofbirth` DATE NULL,
+  `gender` CHAR(1) NULL,
+  `fathername` VARCHAR(255) NULL,
+  `mothername` VARCHAR(255) NULL,
+  `nationality` VARCHAR(45) NULL,
+  `hobbies` VARCHAR(255) NULL,
+  `maritalstatus` VARCHAR(45) NULL,
+  `candidatedescription` VARCHAR(255) NULL,
+  `assignedto` VARCHAR(45) NULL,
+  PRIMARY KEY (`ciid`));
+
+  
+ 
+CREATE TABLE `bamsa`.`candidatejobinfo` (
+  `ciid` INT(11) NOT NULL,
+  `candidatecategory` VARCHAR(255) NULL,
+  `candidatesubcategory` VARCHAR(255) NULL,
+  `candidatenoofjobschanged` INT(11) NULL,
+  `currentemployer` VARCHAR(45) NULL,
+  `totalworkexp(yrs)` INT(11) NULL,
+  `totalworkexp(months)` INT(11) NULL,
+  `gapperiod` INT(11) NULL,
+  `relexp` FLOAT NULL,
+  `jobtitle` VARCHAR(255) NULL,
+  `objectives` VARCHAR(255) NULL,
+  `achievements` VARCHAR(255) NULL,
+  `references` VARCHAR(45) NULL,
+  PRIMARY KEY (`ciid`));
+
+ALTER TABLE `bamsa`.`candidatejobinfo` 
+CHANGE COLUMN `ciid` `cjid` INT(11) NOT NULL AUTO_INCREMENT ;
+
+
+  CREATE TABLE `bamsa`.`candidateskillsinfo` (
+  `csiid` INT(11) NOT NULL,
+  `ciid` INT(11) NULL,
+  `resumetitle` VARCHAR(255) NULL,
+  `resumefilename` VARCHAR(255) NULL,
+  `qualification` VARCHAR(255) NULL,
+  `languagesknown` VARCHAR(255) NULL,
+  `currentsalary` FLOAT NULL,
+  `expectedsalary` FLOAT NULL,
+  `primaryskills` VARCHAR(255) NULL,
+  PRIMARY KEY (`csiid`));
+
+  
+  CREATE TABLE `bamsa`.`candidateattachments` (
+  `caatid` INT(11) NOT NULL AUTO_INCREMENT,
+  `ciid` INT(11) NULL,
+  `coverletter` BLOB NULL,
+  `resume` BLOB NULL,
+  PRIMARY KEY (`caatid`));
+  
+   ALTER TABLE `bamsa`.`candidateinformation` 
+CHANGE COLUMN `ciid` `ciid` INT(11) NOT NULL AUTO_INCREMENT ;
+
+
+ALTER TABLE `bamsa`.`candidateinformation` 
+ADD COLUMN `iporhp` VARCHAR(45) NULL AFTER `assignedto`,
+ADD COLUMN `createddate` VARCHAR(45) NULL AFTER `iporhp`;
+
+  ALTER TABLE `bamsa`.`candidatejobinfo` 
+CHANGE COLUMN `totalworkexp(yrs)` `totalworkexpyrs` INT(11) NULL DEFAULT NULL ;
+
+
+ALTER TABLE `bamsa`.`candidatejobinfo` 
+CHANGE COLUMN `totalworkexp(months)` `totalworkexpmonths` INT(11) NULL ;
+
+ALTER TABLE `bamsa`.`candidatejobinfo` 
+CHANGE COLUMN `references` `references` VARCHAR(255) NULL DEFAULT NULL ;
+
+ALTER TABLE `bamsa`.`candidateskillsinfo` 
+CHANGE COLUMN `csiid` `csiid` INT(11) NOT NULL AUTO_INCREMENT ;
+
+ALTER TABLE `bamsa`.`candidatejobinfo` 
+ADD COLUMN `ciid` INT(11) NULL AFTER `references`;
+
+ALTER TABLE `bamsa`.`candidatejobinfo` 
+CHANGE COLUMN `references` `creferences` VARCHAR(255) NULL DEFAULT NULL ;
+
+
+ALTER TABLE `bamsa`.`candidateinformation` 
+ADD COLUMN `candidatecategory` VARCHAR(255) NULL AFTER `createddate`,
+ADD COLUMN `candidatesubcategory` VARCHAR(255) NULL AFTER `candidatecategory`,
+ADD COLUMN `candidatenoofjobschanged` INT(11) NULL AFTER `candidatesubcategory`,
+ADD COLUMN `currentemployer` VARCHAR(45) NULL DEFAULT NULL AFTER `candidatenoofjobschanged`,
+ADD COLUMN `totalworkexpyrs` INT(11) NULL DEFAULT NULL AFTER `currentemployer`,
+ADD COLUMN `totalworkexpmonths` INT(11) NULL DEFAULT NULL AFTER `totalworkexpyrs`,
+ADD COLUMN `gapperiod` INT(11) NULL DEFAULT NULL AFTER `totalworkexpmonths`,
+ADD COLUMN `relexp` FLOAT NULL DEFAULT NULL AFTER `gapperiod`,
+ADD COLUMN `jobtitle` VARCHAR(255) NULL DEFAULT NULL AFTER `relexp`,
+ADD COLUMN `objectives` VARCHAR(255) NULL DEFAULT NULL AFTER `jobtitle`,
+ADD COLUMN `achievements` VARCHAR(255) NULL DEFAULT NULL AFTER `objectives`,
+ADD COLUMN `creferences` VARCHAR(255) NULL DEFAULT NULL AFTER `achievements`;
+
+
+ALTER TABLE `bamsa`.`candidateinformation` 
+ADD COLUMN `resumetitle` VARCHAR(255) NULL DEFAULT NULL AFTER `creferences`,
+ADD COLUMN `resumefilename` VARCHAR(255) NULL DEFAULT NULL AFTER `resumetitle`,
+ADD COLUMN `qualification` VARCHAR(255) NULL DEFAULT NULL AFTER `resumefilename`,
+ADD COLUMN `languagesknown` VARCHAR(255) NULL DEFAULT NULL AFTER `qualification`,
+ADD COLUMN `currentsalary` FLOAT NULL DEFAULT NULL AFTER `languagesknown`,
+ADD COLUMN `expectedsalary` FLOAT NULL DEFAULT NULL AFTER `currentsalary`,
+ADD COLUMN `primaryskills` VARCHAR(255) NULL DEFAULT NULL AFTER `expectedsalary`;
+
+ALTER TABLE `bamsa`.`candidateinformation` 
+ADD COLUMN `coverletter` BLOB NULL DEFAULT NULL AFTER `primaryskills`,
+ADD COLUMN `resume` BLOB NULL DEFAULT NULL AFTER `coverletter`;
+
+ALTER TABLE `bamsa`.`candidateinformation` 
+ADD COLUMN `state` VARCHAR(255) NULL AFTER `resume`,
+ADD COLUMN `city` VARCHAR(255) NULL AFTER `state`,
+ADD COLUMN `sourcing` VARCHAR(255) NULL AFTER `city`,
+ADD COLUMN `fax` VARCHAR(255) NULL AFTER `sourcing`,
+ADD COLUMN `candidatestatus` VARCHAR(255) NULL AFTER `fax`;
+
+
+ALTER TABLE `bamsanew`.`candidateinformation` 
+CHANGE COLUMN `iporhp` `hpstatus` VARCHAR(45) NULL DEFAULT NULL ;

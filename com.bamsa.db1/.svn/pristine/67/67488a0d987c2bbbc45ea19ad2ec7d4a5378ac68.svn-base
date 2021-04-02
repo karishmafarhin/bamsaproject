@@ -1,0 +1,75 @@
+package com.bamsa.db.facade;
+
+import java.util.List;
+
+import com.bamsa.db.beans.AssetTicketBean;
+import com.bamsa.db.beans.CandidateInfoBean;
+
+import com.bamsa.db.beans.ClockTimeBean;
+import com.bamsa.db.beans.CompanyAccessoryBean;
+import com.bamsa.db.beans.CompanyAssetsBean;
+import com.bamsa.db.beans.CompanyComponentBean;
+import com.bamsa.db.beans.CompanyConsumableBean;
+import com.bamsa.db.beans.CompanyLicensesBean;
+import com.bamsa.db.beans.Employee;
+import com.bamsa.db.beans.EmployeeDetails;
+import com.bamsa.db.beans.EmployeeTask;
+import com.bamsa.db.beans.GrievanceDetails;
+import com.bamsa.db.beans.NewBranchBean;
+import com.bamsa.db.beans.NewProjectBean;
+import com.bamsa.db.beans.TaskDetails;
+import com.bamsa.db.beans.User;
+import com.bamsa.db.exceptions.DBUpdateException;
+
+public interface UserFunctions {
+	public User authenticateUser(User user);
+	public ClockTimeBean saveClockInDetails(ClockTimeBean clockInDetails);
+	public List<ClockTimeBean> getClockDetails(int uid);
+	public ClockTimeBean saveClockOutDetails(ClockTimeBean clockOutDetails)throws DBUpdateException;
+	public EmployeeDetails registerUser(User user);
+	public List<EmployeeDetails> getEmployees();
+	public EmployeeDetails getEmployeeDetails(int uid);
+	public EmployeeDetails upateEmployeeDetails(EmployeeDetails employeeDetails)throws DBUpdateException;
+	public List<EmployeeTask> getEmployeetask(int uid);
+	public List<Employee> getEmployeesUnderUser(int uid);
+	public List<EmployeeDetails> presentEmployeeDetails();
+	public List<EmployeeDetails> getAllEmployees();
+	public EmployeeTask saveEmployeeTask(EmployeeTask employeeTaskDetails);
+	public List<TaskDetails> getTaskDetails(int uid);
+	public TaskDetails updateTaskDetails(TaskDetails bean)throws DBUpdateException;
+	public float updatePercentage(int tid,float percentage,String status,String reason)throws DBUpdateException;
+	public EmployeeDetails getEmplDetails(int uid);
+	public List<TaskDetails> getEmpMilestones();
+	public String resetPassword(User user) throws DBUpdateException;
+	public GrievanceDetails registerGrievance(GrievanceDetails grievancedt);
+	public List<GrievanceDetails> getAllGrievances();
+	public List<TaskDetails> getEmployeeTasksPerformance(String empid,int npid);
+	public List<EmployeeDetails> getEmployeesDepartmentDetails();
+	public CompanyAssetsBean registerAsset(CompanyAssetsBean bean);
+	public CompanyLicensesBean registerLicense(CompanyLicensesBean bean);
+	public CompanyConsumableBean registerConsumable(CompanyConsumableBean bean);
+	public CompanyAccessoryBean registerAccessory(CompanyAccessoryBean bean);
+	public CompanyComponentBean registerComponent(CompanyComponentBean bean);
+	public List<EmployeeDetails> getEmployeesReportingDetails();
+	public List<CompanyLicensesBean>  getCompanyLicensesDetails();
+	public List<CompanyConsumableBean>  getCompanyConsumableDetails();
+	public List<CompanyAssetsBean> getCompanyAsset();
+	public List<CompanyAccessoryBean> getCompanyAccessory();
+	public List<CompanyComponentBean> getCompanyComponent();
+	public AssetTicketBean registerTicket(AssetTicketBean bean);
+	public List<AssetTicketBean> getAssetTicket();
+	public AssetTicketBean  updateBstatusOfAssetTicket(AssetTicketBean bean)throws DBUpdateException;
+	public AssetTicketBean  updateRstatusOfAssetTicket(AssetTicketBean bean)throws DBUpdateException;
+	public AssetTicketBean updateAssetStatus(AssetTicketBean bean)throws DBUpdateException;
+	public List<String> getAllEmployeesMails();
+	public GrievanceDetails updateGrievanceTicketStatus(GrievanceDetails bean)throws DBUpdateException;
+	public EmployeeDetails updateEmployeeReportToDetails(EmployeeDetails bean)throws DBUpdateException;
+	public NewProjectBean saveNewProject(NewProjectBean newProjectDetails);
+	public List<NewProjectBean> getEmployeerojectDetails();
+	public List<TaskDetails> getEmployeesUnderProject(int npid);
+	public List<TaskDetails> getProjectTypeDetails();
+	public NewBranchBean saveBranchDetails(NewBranchBean branch);
+	public List<String> getBranchNameDetails();
+	public CandidateInfoBean saveCandidatedetails(CandidateInfoBean details);
+	public List<EmployeeDetails> getAssignedtodetails();
+}

@@ -1,0 +1,16 @@
+package com.bamsa.db.dao;
+
+import com.bamsa.db.beans.CandidateInfoBean;
+import com.bamsa.db.beans.CandidateJobInfoBean;
+import com.bamsa.db.beans.CandidateSkillsInfoBean;
+
+public interface CandidateInfoDAO {
+	/**
+	 * creates candidate info
+	 * @param CandidateInfoBean bean
+	 * @return CandidateInfoBean bean
+	 */
+	public CandidateInfoBean saveCandidatedetails(CandidateInfoBean details);
+	public CandidateJobInfoBean saveCandidatejobdetails(CandidateJobInfoBean details);
+	public CandidateSkillsInfoBean saveCandidateskillsdetails(CandidateSkillsInfoBean skilldetails);
+}
